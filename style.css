@@ -1,0 +1,116 @@
+.keyboard {
+    max-width: 1400px;
+    font-size: 1.4rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    /* border: 1px solid red; */
+
+
+    & .main-pad {
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+        gap: .2em;
+
+        & .row {
+            display: flex;
+            flex-direction: row;
+            flex: 1 1 6.66666667%;
+            gap: .2em;
+
+            & > div {
+                background-color: hsla(0, 0%, 0%, 0.1);
+                width: 5em;
+                height: 3em;
+                display: grid;
+                place-content: center;
+                font-size: 1rem;
+
+                &.backspace {
+                    flex-basis: calc(6.66666667% * 2.5);
+                }
+
+                &.tab {
+                    flex-basis: calc(6.66666667% * 2);
+                }
+
+                &.capsLock {
+                    flex-basis: calc(6.66666667% * 2);
+                }
+
+                &.enter {
+                    flex-basis: calc(6.66666667% * 2);
+                }
+
+                &.shift {
+                    flex-basis: calc(6.66666667% * 3);
+                }
+
+                &.ctrl {
+                    /* flex-basis: calc(6.66666667% * .95); */
+                }
+
+                &.space {
+                    flex-basis: calc(6.66666667% * 5.5);
+                }
+            }
+        }
+    }
+
+    & .middlePart {
+        border: 1px solid red;
+        display: flex;
+        flex-direction: column;
+        gap: .2em;
+
+        & .row {
+            display: flex;
+            gap: .2em;
+            flex-direction: row;
+            flex: 1 1 6.66666667%;
+
+            & > div {
+                background-color: hsla(0, 0%, 0%, 0.1);
+                width: 5em;
+                height: 3em;
+                display: grid;
+                place-content: center;
+                font-size: 1rem;
+            }
+
+            &.invisible > div:not(.arrUp) {
+                background-color: transparent;
+            }
+        }
+    }
+
+    & .numpad {
+        border: 1px solid red;
+        display: flex;
+        flex-direction: column;
+        gap: .2em;
+
+        & .row {
+            display: flex;
+            gap: .2em;
+            flex-direction: row;
+            flex: 1 1 6.66666667%;
+
+            & > div {
+                background-color: hsla(0, 0%, 0%, 0.1);
+                width: 5em;
+                height: 3em;
+                display: grid;
+                place-content: center;
+                font-size: 1rem;
+            }
+
+            &.invisible > div:not(.arrUp) {
+                background-color: transparent;
+            }
+        }
+    }
+
+}
