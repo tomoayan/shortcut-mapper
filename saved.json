@@ -1,0 +1,9 @@
+{
+    "davinci": {
+        "icon": "https://images.blackmagicdesign.com/images/media/press-images/davinci-resolve-logo/davinci-resolve-logo-hero@2x.jpg?",
+        "name": "Davinci Resolve",
+        "shortcuts": {
+            "shift-ctrl-c": "copy"
+        }
+    }
+}
