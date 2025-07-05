@@ -1,6 +1,51 @@
 let isLogin = true
 let activeKeys = []
 let shortcuts = {}
+let keys = {}
+
+addEventListener("load", () => {
+    const keyboard = document.querySelectorAll('.keyboard .row > div')
+    for (const key of keyboard) {
+        // key.dataset.keyPrimary === acKey || key.dataset.keySecondary === acKey
+        if (key.dataset.keyPrimary) {
+            keys[key.dataset.keyPrimary] = key;
+        }
+
+        if (key.dataset.keySecondary) {
+            keys[key.dataset.keyPrimary] = key;
+        }
+    }
+
+
+    setTimeout(() => {
+        document.addEventListener('keydown', function (event) {
+            const key = event.key;
+            try {
+                if (!activeKeys.includes(key)) {
+                    // Key not active, so activate it!
+                    activeKeys.push(key);
+                    keys[key].classList.add("active");
+                } else {
+                    const keyIndex = activeKeys.indexOf(key);
+                    activeKeys.splice(keyIndex, 1);
+                    keys[key].classList.remove("active");
+                }
+            } catch (e) {
+                const keyList = Object.keys(keys)
+                if (keyList.includes(e.key)) {
+                    console.warn(e.key + " key is availble the the virtual keyboard list, error is somewhere else")
+                } else {
+                    console.error(e.key + " key is not availble on the virtual keyboard. Please report this on github issues")
+                    console.log(e)
+                }
+            }
+        });
+    }, 500);
+})
+
+
+
+
 
 async function getData() {
     const url = "/saved.json";
@@ -18,29 +63,3 @@ async function getData() {
     }
 };
 getData();
-
-
-
-
-document.addEventListener('keydown', function (event) {
-    const key = event.key;
-    if (!activeKeys.includes(key)) {
-        // Key not active
-        activeKeys.push(key)
-    } else {
-        const keyIndex = activeKeys.indexOf(key)
-        activeKeys.splice(keyIndex, 1)
-    }
-    console.log(activeKeys)
-});
-
-
-
-addEventListener("load", (e) => {
-const keyboard = document.querySelectorAll('.keyboard .row > div')
-for (const key of keyboard) {
-    console.log(key)
-    // [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z]
-}
-
-})

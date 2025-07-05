@@ -114,6 +114,6 @@
     }
 
     & .active {
-        background-color: brown;
+        background-color: brown !important;
     }
 }
