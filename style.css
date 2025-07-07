@@ -117,3 +117,9 @@
         background-color: brown !important;
     }
 }
+
+
+
+button:disabled {
+    background-color: red !important;
+}

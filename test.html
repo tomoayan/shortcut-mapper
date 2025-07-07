@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Google Drive AppData (GIS Only)</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+
+<body>
+    <h2>GIS-Only AppDataFolder Demo</h2>
+    <button id="auth_login" disabled>Login</button>
+    <button onclick="uploadFile()">2. Upload File</button>
+    <!-- <button onclick="listFiles()">3. List Files</button> -->
+    <!-- Add this if you want a button for manual download by file ID -->
+    <input type="text" id="fileIdInput" placeholder="Enter File ID">
+    <button onclick="downloadFileById()">4. Download by ID</button>
+
+
+    <pre id="output"></pre>
+
+    <script>
+        const shortcutFileName = 'keyboard-shortcut-list.json'
+        // const shortcutFileName = 'keyboard-shortcut-list3.json'
+        const client_id = '1017733844904-lo7r0pbu102mecmbpjktqb1nd64ndbj0.apps.googleusercontent.com'
+        let tokenClient;
+        let accessToken = {
+            token: null,
+            expiry: null // time in ms
+        };
+        let tokenRefreshPromiseProxy;
+        let loggedPromiseProxy;
+
+        let cloudShortcutJSON;
+
+        // html elements
+        let login_btn = document.getElementById('auth_login')
+
+
+
+
+
+        // Prepare necessary scripts on DOM Load
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Load GIS script manually
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://accounts.google.com/gsi/client';
+                    script.async = true;
+                    script.onload = () => resolve();
+                    script.onerror = () => reject(new Error('Failed to load GIS script'));
+                    document.head.appendChild(script);
+                });
+
+                // Load Hash WASM script manually
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/hash-wasm@4/dist/md5.umd.min.js';
+                    script.async = true;
+                    script.onload = () => resolve();
+                    script.onerror = () => reject(new Error('Failed to load Hash-WASM'));
+                    document.head.appendChild(script);
+                });;
+
+                // Init Oauth2
+                tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id,
+                    scope: 'https://www.googleapis.com/auth/drive.appdata',
+                    callback: (tokenResponse) => {
+                        const expiresInSeconds = tokenResponse.expires_in;
+                        accessTokenExpiryTime = Date.now() + (expiresInSeconds * 1000); // Calculate absolute expiry time
+                        accessToken = {
+                            token: tokenResponse.access_token,
+                            expiry: accessTokenExpiryTime
+                        };
+
+                        if (tokenRefreshPromiseProxy) {
+                            console.log('Got one')
+                            tokenRefreshPromiseProxy.resolve()
+                            tokenRefreshPromiseProxy = null;
+                            return
+                        }
+                        console.log('Got an access token')
+                        loggedPromiseProxy.resolve()
+                    },
+                    error_callback: (errRes) => {
+                        if (tokenRefreshPromiseProxy) {
+                            tokenRefreshPromiseProxy.reject(new Error(errRes.error));
+                            tokenRefreshPromiseProxy = null;
+                            console.error('Error while refreshing access token')
+                            console.error(errRes.error)
+                            return
+                        }
+                        console.error('Error while fetching access token')
+                        loggedPromiseProxy.reject()
+                    }
+
+                });
+
+                login_btn.disabled = false;
+            } catch (err) {
+                alert(err.message);
+            }
+        });
+
+        // Check token isExist or isValid
+        const checkToken = () => {
+            return new Promise(async (resolve, reject) => {
+                if (!accessToken.token) {
+                    alert('Login first!');
+                    return reject();
+                };
+
+                if (Date.now() >= accessToken.expiry) {
+                    const refreshToken = new Promise((resolve, reject) => {
+                        resolveAccessTokenPromise = { resolve, reject };
+                        tokenClient.requestAccessToken();
+                    });
+
+                    console.log("Access token is missing or expired. Requesting a new one...");
+                    try {
+                        await refreshToken()
+                        return resolve()
+                    } catch (e) {
+                        return reject()
+                    }
+                }
+
+                return resolve()
+            })
+        }
+
+
+
+
+
+        // Login
+        login_btn.addEventListener('click', async (e) => {
+            if (!tokenClient) return alert('Google Identity Services not ready! Please try again in a moment');
+            const logged = new Promise((resolve, reject) => {
+                loggedPromiseProxy = {
+                    resolve,
+                    reject
+                }
+            })
+            tokenClient.requestAccessToken();
+            try {
+                await logged;
+
+                login_btn.textContent = "Switch Account"
+
+                const fileList = await listFiles(true)
+
+                // Some Important Variables
+                let filesFound = 0; // Check is multiple same name shortcut files exist
+                let firstShortcutFileId;
+
+                const output = document.getElementById('output');
+                output.textContent = '';
+
+                // TODO: what if multiple same name files found
+                // TODO: Handle if multiple files available. UI to Download and Delete
+                // TODO: If Both version cloud and local are super different
+
+
+                fileList.files.forEach(file => {
+                    if (file.name === shortcutFileName) {
+                        filesFound++
+                        if (filesFound === 1) firstShortcutFileId = file.id;
+                    } else {
+                        console.log(file)
+                    }
+
+                    const a = document.createElement('a');
+                    a.href = '#';
+                    a.textContent = `🔽 ${file.name}`;
+                    a.style.display = 'block';
+                    a.onclick = () => downloadFile(file.id, file.name);
+                    output.appendChild(a);
+                });
+
+
+                // No Files Found
+                if (filesFound === 0) {
+                    console.info(`No ${shortcutFileName} found in appDataFolder, uploading a new one`)
+                    console.log(await uploadFile({}))
+                    return
+                }
+
+
+                // File Found
+                if (filesFound === 1) {
+                    try {
+                        console.log('file found')
+                        const fileJSON = await downloadFile(firstShortcutFileId, shortcutFileName)
+                        return cloudShortcutJSON = fileJSON;
+                    } catch {
+                        return console.warn('Could not load the shortcut file from appDataFolder', '\nYou can access the appDataFolder using our web ui to download and try to find the error and fix it yourself...')
+                    }
+                }
+
+
+                // File Found But Have Multiple Copies
+                if (filesFound > 1) {
+                    console.log(`Multiple saved shortcut files found with the name of ${shortcutFileName}. \nTotal count: ${filesFound}`);
+                    alert('multiple shortcut files found in drive. aborting...')
+                }
+
+
+            } catch (error) {
+                throw new Error("Could not able to login");
+            }
+        })
+
+
+
+
+
+        // Download File
+        const downloadFile = (fileId, fileName) => {
+            return new Promise(async (resolve, reject) => {
+                const file = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken.token}`
+                    }
+                }).then((r) => r.text())
+
+                try {
+                    resolve(JSON.parse(file));
+                } catch (e) {
+                    reject()
+                    throw new Error("Can't parse shortcut file json content", e);
+                }
+
+
+                // download the file
+                // fetch('...').then(blob => {
+                //     const url = URL.createObjectURL(blob);
+                //     const a = document.createElement('a');
+                //     a.href = url;
+                //     a.download = fileName;
+                //     document.body.appendChild(a);
+                //     a.click();
+                //     a.remove();
+                //     URL.revokeObjectURL(url);
+                //     console.log(`✅ Downloaded: ${fileName}`);
+                // })
+                // .catch(err => {
+                //     console.log('❌ Error downloading file: ' + err.message);
+                // });
+            })
+        }
+
+
+
+
+
+        // Listing File
+        const listFiles = (raw) => {
+            return new Promise(async (resolve, reject) => {
+                // Validate Token
+                try {
+                    await checkToken()
+                } catch (err) {
+                    console.warn('Listing')
+                    return reject()
+                }
+
+                // Get Files List
+                try {
+                    const res = await fetch(
+                        'https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&fields=files(id,name,modifiedTime,mimeType,md5Checksum)',
+                        {
+                            headers: {
+                                Authorization: `Bearer ${accessToken.token}`
+                            }
+                        }
+                    ).then(res => res.json());
+
+                    if (!res || res.error?.code === 401) {
+                        console.log(res.error)
+                        console.error('OAuth 2 access token is invalid, Please try again')
+                        return reject()
+                    }
+
+                    if ((typeof raw) == "boolean" && raw) {
+                        return resolve(res)
+                    }
+
+                    const filesFound = [];
+                    res.files.forEach(file => {
+                        if (file.name === shortcutFileName) filesFound.push({
+                            id: file.id,
+                            md5Checksum: file.md5Checksum
+                        })
+                    })
+
+                    resolve(filesFound)
+                } catch (err) {
+                    console.error('Error at fetching file lists')
+                    console.error(err)
+                    reject()
+                }
+            })
+        }
+
+
+
+
+
+        // Upload File
+        const uploadFile = (fileContent) => {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    await checkToken()
+                } catch (err) {
+                    console.warn('Upload stopped')
+                    return reject()
+                }
+
+                // Hash check before and after upload
+                const fileContentString = JSON.stringify(fileContent);
+                const fileContentMd5Hash = await hashwasm.md5(fileContentString)
+                // console.log('Calculated MD5 Checksum:', fileContentMd5Hash); // Log it for debugging
+
+
+                const metadata = {
+                    name: shortcutFileName,
+                    parents: ['appDataFolder'],
+                };
+
+                const boundary = crypto.randomUUID();
+                const delimiter = `\r\n--${boundary}\r\n`;
+                const close_delimiter = `\r\n--${boundary}--`;
+
+                const body =
+                    delimiter +
+                    'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+                    JSON.stringify(metadata) +
+                    delimiter +
+                    'Content-Type: application/json\r\n\r\n' +
+                    fileContentString +
+                    close_delimiter;
+
+                console.log('Request body prepared. Length:', body.length); // Useful for debugging
+
+                try {
+                    const response = await fetch(
+                        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + accessToken.token,
+                                'Content-Type': `multipart/related; boundary=${boundary}`
+                            },
+                            body: body
+                        }
+                    );
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('❌ Upload failed: ', response.status, response.statusText, errorText);
+                        return reject();
+                    }
+
+                    const result = await response.json();
+                    console.log('📤 Uploaded file: ' + JSON.stringify(result, null, 2));
+                    
+                    // TODO: Fix this messy code
+                    console.log('checking checksum')
+                    const fileList = await listFiles();
+                    console.log(fileList)
+                    if (fileList.length === 1) {
+                        console.log('same checksum: ' + fileList[0].md5Checksum + fileContentMd5Hash)
+                    } else {
+                        throw new Error("some error....");
+                    }
+                    resolve(result)
+                } catch (error) {
+                    reject();
+                    throw new Error("Error while uploading to appDataFolder");
+                }
+            })
+        }
+
+
+
+
+
+        // Optional manual input download (from text box)
+        function downloadFileById() {
+            const fileId = document.getElementById('fileIdInput').value;
+            if (!fileId) return alert('Enter a file ID!');
+            downloadFile(fileId, 'downloaded_file.txt');
+        }
+    </script>
+</body>
+
+</html>
