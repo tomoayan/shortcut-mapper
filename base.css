@@ -23,6 +23,7 @@ body {
     line-height: 1.5;
     /* Improve text rendering in safari */
     -webkit-font-smoothing: antialiased;
+    font-family: "Poppins", sans-serif;
 }
 
 

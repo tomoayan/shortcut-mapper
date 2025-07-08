@@ -3,18 +3,9 @@ let activeKeys = []
 let shortcuts = {}
 let keys = {}
 
-addEventListener("load", () => {
-    const keyboard = document.querySelectorAll('.keyboard .row > div')
-    for (const key of keyboard) {
-        // key.dataset.keyPrimary === acKey || key.dataset.keySecondary === acKey
-        if (key.dataset.keyPrimary) {
-            keys[key.dataset.keyPrimary] = key;
-        }
+addEventListener("load", async () => {
 
-        if (key.dataset.keySecondary) {
-            keys[key.dataset.keyPrimary] = key;
-        }
-    }
+
 
 
     setTimeout(() => {
@@ -41,25 +32,61 @@ addEventListener("load", () => {
             }
         });
     }, 500);
+
+
+
+
+    try {
+
+        const tomoElementExtractRegex = /<tomo-element>(?<element>.*)<\/tomo-element>.*?style>(?<style>.*)<\/style>/s;
+        const keyboardList = ['/keyboard/generic.html']
+
+        const res = await fetch(keyboardList[0]).then(res => res.text());
+        let element = tomoElementExtractRegex.exec(res)
+
+        const keyboard_wrapper = document.getElementById('keyboard-wrapper')
+
+        keyboard_wrapper.innerHTML = element.groups.element + '<style>' + element.groups.style + '</style>';
+
+
+        const keyboard = document.querySelectorAll('.keyboard .row > div')
+        for (const key of keyboard) {
+            // key.dataset.keyPrimary === acKey || key.dataset.keySecondary === acKey
+            if (key.dataset.keyPrimary) {
+                keys[key.dataset.keyPrimary] = key;
+            }
+
+            if (key.dataset.keySecondary) {
+                keys[key.dataset.keyPrimary] = key;
+            }
+        }
+    } catch (error) {
+        console.error(error);
+    }
+
 })
 
 
 
 
 
-async function getData() {
-    const url = "/saved.json";
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
+// async function getData() {
+//     const url = "/saved.json";
+//     try {
+//         const response = await fetch(url);
+//         if (!response.ok) {
+//             throw new Error(`Response status: ${response.status}`);
+//         }
 
-        const json = await response.json();
-        shortcuts = json
-        // console.log(Object.keys(json));
-    } catch (error) {
-        console.error(error.message);
-    }
-};
-getData();
+//         const json = await response.json();
+//         shortcuts = json
+//         // console.log(Object.keys(json));
+//     } catch (error) {
+//         console.error(error.message);
+//     }
+// };
+// getData();
+
+
+
+

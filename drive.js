@@ -11,9 +11,7 @@ let accessToken = {
 let tokenRefreshPromiseProxy;
 let loggedPromiseProxy;
 
-let cloudShortcutJSON = {
-    how: 'mao'
-};
+let cloudShortcutJSON = {};
 let shortcutFileId;
 
 // html elements
