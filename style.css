@@ -129,6 +129,7 @@ nav {
             & span {
                 display: flex;
                 place-content: center;
+                align-items: center;
                 gap: .5rem;
             }
 
@@ -141,6 +142,11 @@ nav {
             & img {
                 width: 1.3rem;
                 height: 1.3rem;
+            }
+
+            & svg {
+                width: 1rem;
+                height: 1rem;
             }
         }
     }
