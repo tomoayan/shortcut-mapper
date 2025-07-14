@@ -1,7 +1,25 @@
+import * as localStorageData from "./localStorageManager.js"
+// import * as gdrive from "./drive.js";
+
 let isLogin = true
 let activeKeys = []
 let keyDomList = {}
-// let shortcuts = {}
+let shortcutsList = {
+    lastModification: "0utc ms",
+    modificationDevice: "redmi90",
+    softwares: {
+        davinci: {
+            icon: "https://images.blackmagicdesign.com/images/media/press-images/davinci-resolve-logo/davinci-resolve-logo-hero@2x.jpg?",
+            name: "Davinci Resolve",
+            shortcuts: {
+                "shift⌨ctrl⌨c": {
+                    usecase: "copy url",
+                    extrainfo: "lol"
+                }
+            }
+        }
+    }
+}
 
 let keyboardSelector = document.getElementById('keyboard-selector');
 
@@ -38,7 +56,7 @@ addEventListener("load", async () => {
 
 
 
-
+// Keyboard Selector
 const keyboard_load = async () => {
     const tomoElementExtractRegex = /<tomo-element>(?<element>.*)<\/tomo-element>.*?style>(?<style>.*)<\/style>/s;
     const selectedKeyboard = keyboardSelector.value
@@ -60,3 +78,7 @@ const keyboard_load = async () => {
         if (key.dataset.keySecondary) keyDomList[key.dataset.keySecondary] = key;
     }
 }
+
+
+
+
