@@ -1,11 +1,11 @@
 <tomo-element>
 
 
-    <div class="keyboard">
+    <div class="keyboard" data-keyboard="generic">
 
         <div class="main-pad">
             <div class="row fn">
-                <div data-key-primary="escape">
+                <div data-key-primary="Escape">
                     esc
                 </div>
                 <div data-key-primary="F1">
@@ -307,7 +307,7 @@
 
 
 <style>
-.keyboard {
+.keyboard[data-keyboard="generic"] {
     max-width: 1400px;
     background-color: rgba(0, 0, 0, 0.05);
     display: flex;
@@ -424,12 +424,6 @@
     & .active {
         background-color: brown !important;
     }
-}
-
-
-
-button:disabled {
-    background-color: red !important;
 }
 
 </style>
