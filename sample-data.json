@@ -2,13 +2,14 @@
     "lastModification": 0,
     "softwares": {
         "Davinci Resolve": {
-            "icon": "https://images.blackmagicdesign.com/images/media/press-images/davinci-resolve-logo/davinci-resolve-logo-hero@2x.jpg?",
-            "shortcuts": {
-                "shift⌨ctrl⌨c": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/DaVinci_Resolve_17_logo.svg/240px-DaVinci_Resolve_17_logo.svg.png",
+            "shortcuts": [
+                {
                     "usecase": "copy url",
-                    "extrainfo": "lol"
+                    "extrainfo": "lol",
+                    "shortcut": "shift⌨ctrl⌨c"
                 }
-            }
+            ]
         }
     }
 }

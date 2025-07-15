@@ -7,15 +7,25 @@ let keyDomList = {}
 let shortcutsList = {
     lastModification: 0,
     softwares: {
-        davinci: {
-            icon: "./img/DaVinci_Resolve_17_logo.svg.png",
-            name: "Davinci Resolve 2",
-            shortcuts: {
-                "shift⌨ctrl⌨c": {
+        "Davinci Resolve": {
+            icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/DaVinci_Resolve_17_logo.svg/240px-DaVinci_Resolve_17_logo.svg.png",
+            shortcuts: [
+                {
                     usecase: "copy url",
-                    extrainfo: "lol"
+                    extrainfo: "lol",
+                    shortcut: "Shift⌨Control⌨1"
+                },
+                {
+                    usecase: "copy url",
+                    extrainfo: "lol",
+                    shortcut: "Shift⌨2"
+                },
+                {
+                    usecase: "copy url",
+                    extrainfo: "lol",
+                    shortcut: "Alt⌨`"
                 }
-            }
+            ]
         }
     }
 }
@@ -37,6 +47,7 @@ addEventListener('DOMContentLoaded', async () => {
                     activeKeys.splice(keyIndex, 1);
                     keyDomList[key].classList.remove("active");
                 }
+                activeKeysShortcuts()
             } catch (e) {
                 const keyList = Object.keys(keyDomList)
                 if (keyList.includes(e.key)) {
@@ -50,7 +61,8 @@ addEventListener('DOMContentLoaded', async () => {
     }, 500);
 
     keyboardSelector.addEventListener('change', keyboard_load())
-    shortcutsList = await localStorageData.get()
+    // shortcutsList = await localStorageData.get()
+    localStorageData.set(shortcutsList)
     refreshSoftwareList()
 })
 
@@ -81,6 +93,66 @@ const keyboard_load = async () => {
 }
 
 
+
+
+
+const activeKeysShortcuts = async () => {
+    let activeShortcutLists = [];
+
+
+    let isAvtiveShortcutMatched = (arr1, arr2) => {
+        if (arr1.length !== arr2.length) {
+            return false;
+        }
+
+        // Sort both arrs
+        const sortedArr1 = arr1.slice().sort();
+        const sortedArr2 = arr2.slice().sort();
+
+        // If not matched, return false
+        for (let i = 0; i < sortedArr1.length; i++) {
+            if (sortedArr1[i] !== sortedArr2[i]) return false;
+        };
+
+        return true
+    }
+
+    // remove existing lists
+    let list = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcuts > li')
+    for (let index = 1; index < list.length; index++) list[index].remove();
+
+
+    for (const softwareName in shortcutsList.softwares) {
+        let filteredShortcuts;
+        if (activeKeys.length === 0) {
+            filteredShortcuts = shortcutsList.softwares[softwareName].shortcuts;
+        } else {
+            filteredShortcuts = shortcutsList.softwares[softwareName].shortcuts
+                .filter((sCut) => {
+
+                    // console.log(sCut.shortcut + ': ' + isAvtiveShortcutMatched(sCut.shortcut.split('⌨'), activeKeys))
+
+
+                    return isAvtiveShortcutMatched(sCut.shortcut.split('⌨'), activeKeys)
+                });
+        }
+
+        if (filteredShortcuts.length < 1) break
+
+        const softwareIcon = shortcutsList.softwares[softwareName].icon;
+        filteredShortcuts.forEach(shortcut => {
+            activeShortcutLists.push({
+                software: softwareName,
+                icon: softwareIcon,
+                shortcut: shortcut.shortcut,
+                usecase: shortcut.usecase,
+                extrainfo: shortcut.extrainfo
+            })
+        });
+
+        refreshShortcutList(activeShortcutLists);
+    }
+}
 
 
 
@@ -124,13 +196,39 @@ const refreshSoftwareList = () => {
     for (let index = 0; index < softwareLists.length; index++) {
         const softwareName = softwareLists[index];
         const software = shortcutsList.softwares[softwareName];
-        
+
         const htmlString = `<li>
             <span>
                 <img src="${software.icon}" alt="${softwareName} logo">
                 ${softwareName}
             </span>
             <span class="total">12</span>
+        </li>`
+        let li = parser.parseFromString(htmlString, 'text/html')
+        list[0].after(li.body.firstChild)
+    }
+}
+
+
+
+
+
+
+const refreshShortcutList = (data) => {
+    // remove old active shortcuts from ui
+    let list = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcuts > li')
+    for (let index = 1; index < list.length; index++)   list[index].remove();
+
+
+    let parser = new DOMParser();
+
+    for (const shortcut of data) {
+        const htmlString = `<li>
+            <div>
+                <img src="${shortcut.icon}" alt="${shortcut.software}" title="${shortcut.software}">
+                <strong>${shortcut.usecase}</strong><span>${shortcut.shortcut.replace('⌨', ' + ')}</span>
+            </div>
+            <p>${shortcut.extrainfo}</p>
         </li>`
         let li = parser.parseFromString(htmlString, 'text/html')
         list[0].after(li.body.firstChild)
