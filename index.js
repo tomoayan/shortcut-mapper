@@ -35,6 +35,11 @@ let shortcutsList = {
                     usecase: "copy url",
                     extrainfo: "lol",
                     shortcut: "Alt⌨c"
+                },
+                {
+                    usecase: "copy url",
+                    extrainfo: "lol",
+                    shortcut: "f"
                 }
             ]
         }
@@ -76,7 +81,6 @@ addEventListener('DOMContentLoaded', async () => {
 
     // Other Functions
     // shortcutsList = await localStorageData.get()
-    refreshSoftwareList()
     sortActiveShortcutSoftwares()
 })
 
@@ -108,12 +112,6 @@ let isAvtiveShortcutMatched = (arr1, arr2) => {
 const sortActiveShortcutSoftwares = async () => {
     let activeShortcutLists = [];
 
-
-    // remove existing lists
-    // let list = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcuts > li')
-    // for (let index = 1; index < list.length; index++) list[index].remove();
-
-
     for (const softwareName in shortcutsList.softwares) {
         let filteredShortcuts;
         if (activeKeys.length === 0) {
@@ -137,8 +135,60 @@ const sortActiveShortcutSoftwares = async () => {
         });
     }
 
-    refreshShortcutList(activeShortcutLists);
+
+    refreshShortcutSoftwareList(activeShortcutLists);
 }
+
+
+
+
+
+const refreshShortcutSoftwareList = (activeShortcutList) => {
+    let softwareList = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.software-list > li');
+    let shortcutList = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcut-list > li');
+
+    // Remove existing items from list
+    for (let index = 2; index < softwareList.length; index++) softwareList[index].remove();
+    for (let index = 1; index < shortcutList.length; index++) shortcutList[index].remove();
+
+
+    let parser = new DOMParser();
+    let addedSoftwares = []
+
+
+    activeShortcutList.forEach((sCut) => {
+        if (!addedSoftwares.includes(sCut.software)) {
+            const softwareElHtmlString = `<li data-software="${sCut.software}">
+                                    <span>
+                                        <img src="${sCut.icon}" alt="${sCut.software}">
+                                        ${sCut.software}
+                                    </span>
+                                    <span class="total">1</span>
+                                </li>`
+            let li = parser.parseFromString(softwareElHtmlString, 'text/html')
+            softwareList[1].after(li.body.firstChild)
+            addedSoftwares.push(sCut.software)
+        } else {
+            const softwareCountEl = document.querySelector(`.content-wrapper > .shortcut-wrapper > ul.software-list > li[data-software="${sCut.software}"] > span.total`);
+            softwareCountEl.innerText = Number(softwareCountEl.innerText) + 1
+        }
+
+        const shortcutElHtmlString = `<li>
+                                <div class="title-wrapper">
+                                    <img src="${sCut.icon}" alt="${sCut.software}" title="${sCut.software}">
+                                    <div class="title">
+                                        <strong>${sCut.usecase}</strong>
+                                        <span class="item-count">${sCut.shortcut.replace('⌨', ' + ')}</span>
+                                    </div>
+                                </div>
+                                <p class="extra-info">${sCut.extrainfo}</p>
+                            </li>`
+        let li = parser.parseFromString(shortcutElHtmlString, 'text/html')
+        shortcutList[0].after(li.body.firstChild)
+    })
+}
+
+
 
 
 
@@ -163,64 +213,3 @@ const sortActiveShortcutSoftwares = async () => {
 //         console.log(err)
 //     }
 // })
-
-
-
-
-
-
-
-const refreshSoftwareList = () => {
-    let list = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.software-list > li')
-    console.log(list)
-    for (let index = 2; index < list.length; index++)   list[index].remove();
-
-
-    let parser = new DOMParser();
-
-
-    const softwareLists = Object.keys(shortcutsList.softwares)
-    for (let index = 0; index < softwareLists.length; index++) {
-        const softwareName = softwareLists[index];
-        const software = shortcutsList.softwares[softwareName];
-
-        const htmlString = `<li>
-            <span>
-                <img src="${software.icon}" alt="${softwareName} logo">
-                ${softwareName}
-            </span>
-            <span class="total">12</span>
-        </li>`
-        let li = parser.parseFromString(htmlString, 'text/html')
-        list[1].after(li.body.firstChild)
-    }
-}
-
-
-
-
-
-
-const refreshShortcutList = (data) => {
-    // remove old active shortcuts from ui
-    let list = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcut-list > li')
-    for (let index = 1; index < list.length; index++)   list[index].remove();
-
-
-    let parser = new DOMParser();
-
-    for (const shortcut of data) {
-        const htmlString = `<li>
-                                <div class="title-wrapper">
-                                    <img src="${shortcut.icon}" alt="${shortcut.software}" title="${shortcut.software}">
-                                    <div class="title">
-                                        <strong>${shortcut.usecase}</strong>
-                                        <span class="item-count">${shortcut.shortcut.replace('⌨', ' + ')}</span>
-                                    </div>
-                                </div>
-                                <p class="extra-info">${shortcut.extrainfo}</p>
-                            </li>`
-        let li = parser.parseFromString(htmlString, 'text/html')
-        list[0].after(li.body.firstChild)
-    }
-}
