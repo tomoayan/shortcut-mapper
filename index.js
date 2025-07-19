@@ -1,9 +1,10 @@
-import * as localStorageData from "./localStorageManager.js"
+import * as localStorageData from "./modules/localStorageManager.js"
+import * as keyboardManager from "./modules/nav/keyboardManager.js"
 // import * as gdrive from "./drive.js";
 
 let isLogin = true
 let activeKeys = []
-let keyDomList = {}
+let keyDomList = keyboardManager.keyDomList
 let shortcutsList = {
     lastModification: 0,
     softwares: {
@@ -30,10 +31,11 @@ let shortcutsList = {
     }
 }
 
-let keyboardSelector = document.getElementById('keyboard-selector');
 
 
 addEventListener('DOMContentLoaded', async () => {
+
+    // Event: Keydown
     setTimeout(() => {
         document.addEventListener('keydown', function (event) {
             const key = event.key;
@@ -62,37 +64,11 @@ addEventListener('DOMContentLoaded', async () => {
         });
     }, 500);
 
-    keyboardSelector.addEventListener('change', keyboard_load())
-    // shortcutsList = await localStorageData.get()
-    localStorageData.set(shortcutsList)
+    // Other Functions
+    // keyboardSelector.addEventListener ('change', keyboard_load())
+    shortcutsList = await localStorageData.get()
     refreshSoftwareList()
 })
-
-
-
-
-// Keyboard Selector
-const keyboard_load = async () => {
-    const tomoElementExtractRegex = /<tomo-element>(?<element>.*)<\/tomo-element>.*?style>(?<style>.*)<\/style>/s;
-    const selectedKeyboard = keyboardSelector.value
-
-    let res;
-    try {
-        res = await fetch(selectedKeyboard).then(res => res.text());
-    } catch (err) {
-        console.warn('error while fetching keyboard code')
-    }
-
-    let extractedCode = tomoElementExtractRegex.exec(res)
-    const keyboard_wrapper = document.getElementById('keyboard-wrapper')
-    keyboard_wrapper.innerHTML = extractedCode.groups.element + '<style>' + extractedCode.groups.style + '</style>';
-
-    const keyboard = document.querySelectorAll('.keyboard button')
-    for (const key of keyboard) {
-        if (key.dataset.keyPrimary) keyDomList[key.dataset.keyPrimary] = key;
-        if (key.dataset.keySecondary) keyDomList[key.dataset.keySecondary] = key;
-    }
-}
 
 
 

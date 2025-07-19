@@ -149,7 +149,7 @@ login_btn.addEventListener('click', async (e) => {
         //     - update site cache
         // 3. Multiple shortcut files found
         //     - TODO: ask user to delete unwanted files by accessing through my web ui
-debugger
+
         // No Files Found
         if (filesFound.length === 0) {
             console.info(`No ${shortcutFileName} found in appDataFolder, uploading a new one`)

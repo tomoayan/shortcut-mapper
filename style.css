@@ -35,7 +35,7 @@ body {
         min-width: 100px;
         max-width: var(--nav-max-width);
         height: 100%;
-        transition: .3s ease;
+        transition: .2s ease;
         transition-property: width;
 
         &:hover {
