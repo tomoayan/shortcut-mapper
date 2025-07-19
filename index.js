@@ -1,3 +1,13 @@
+// 
+// 
+// 
+// THIS FILE **MOSTLY** CONTAIN SHORTCUT LIST RELATED CODE
+// 
+// 
+// 
+
+
+
 import * as localStorageData from "./modules/localStorageManager.js"
 import * as keyboardManager from "./modules/nav/keyboardManager.js"
 // import * as gdrive from "./drive.js";
@@ -24,7 +34,7 @@ let shortcutsList = {
                 {
                     usecase: "copy url",
                     extrainfo: "lol",
-                    shortcut: "Alt⌨`"
+                    shortcut: "Alt⌨c"
                 }
             ]
         }
@@ -49,7 +59,7 @@ addEventListener('DOMContentLoaded', async () => {
                     activeKeys.splice(keyIndex, 1);
                     keyDomList[key].classList.remove("active");
                 }
-                activeKeysShortcuts()
+                sortActiveShortcutSoftwares()
             } catch (e) {
                 const keyList = Object.keys(keyDomList)
                 if (keyList.includes(e.key)) {
@@ -65,39 +75,43 @@ addEventListener('DOMContentLoaded', async () => {
     }, 500);
 
     // Other Functions
-    // keyboardSelector.addEventListener ('change', keyboard_load())
-    shortcutsList = await localStorageData.get()
+    // shortcutsList = await localStorageData.get()
     refreshSoftwareList()
+    sortActiveShortcutSoftwares()
 })
 
 
 
 
 
-const activeKeysShortcuts = async () => {
+let isAvtiveShortcutMatched = (arr1, arr2) => {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+
+    // Sort both arrs
+    const sortedArr1 = arr1.slice().sort();
+    const sortedArr2 = arr2.slice().sort();
+
+    // If not matched, return false
+    for (let i = 0; i < sortedArr1.length; i++) {
+        if (sortedArr1[i] !== sortedArr2[i]) return false;
+    };
+
+    return true
+}
+
+
+
+
+
+const sortActiveShortcutSoftwares = async () => {
     let activeShortcutLists = [];
 
 
-    let isAvtiveShortcutMatched = (arr1, arr2) => {
-        if (arr1.length !== arr2.length) {
-            return false;
-        }
-
-        // Sort both arrs
-        const sortedArr1 = arr1.slice().sort();
-        const sortedArr2 = arr2.slice().sort();
-
-        // If not matched, return false
-        for (let i = 0; i < sortedArr1.length; i++) {
-            if (sortedArr1[i] !== sortedArr2[i]) return false;
-        };
-
-        return true
-    }
-
     // remove existing lists
-    let list = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcuts > li')
-    for (let index = 1; index < list.length; index++) list[index].remove();
+    // let list = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcuts > li')
+    // for (let index = 1; index < list.length; index++) list[index].remove();
 
 
     for (const softwareName in shortcutsList.softwares) {
@@ -106,13 +120,7 @@ const activeKeysShortcuts = async () => {
             filteredShortcuts = shortcutsList.softwares[softwareName].shortcuts;
         } else {
             filteredShortcuts = shortcutsList.softwares[softwareName].shortcuts
-                .filter((sCut) => {
-
-                    // console.log(sCut.shortcut + ': ' + isAvtiveShortcutMatched(sCut.shortcut.split('⌨'), activeKeys))
-
-
-                    return isAvtiveShortcutMatched(sCut.shortcut.split('⌨'), activeKeys)
-                });
+                .filter((sCut) => isAvtiveShortcutMatched(sCut.shortcut.split('⌨'), activeKeys));
         }
 
         if (filteredShortcuts.length < 1) break
@@ -127,34 +135,34 @@ const activeKeysShortcuts = async () => {
                 extrainfo: shortcut.extrainfo
             })
         });
-
-        refreshShortcutList(activeShortcutLists);
     }
+
+    refreshShortcutList(activeShortcutLists);
 }
 
 
 
 
-document.getElementById('addNewSoftware').addEventListener('click', async () => {
-    let softwareName = prompt("New software name", "");
-    let softwareIconURL = prompt("New software icon url", "");
+// document.getElementById('addNewSoftware').addEventListener('click', async () => {
+//     let softwareName = prompt("New software name", "");
+//     let softwareIconURL = prompt("New software icon url", "");
 
-    if (!(softwareName && softwareIconURL)) return alert('fill both values!')
+//     if (!(softwareName && softwareIconURL)) return alert('fill both values!')
 
-    shortcutsList.softwares[softwareName] = {
-        icon: softwareIconURL,
-        shortcuts: {}
-    }
-    shortcutsList.lastModification = Date.now()
+//     shortcutsList.softwares[softwareName] = {
+//         icon: softwareIconURL,
+//         shortcuts: {}
+//     }
+//     shortcutsList.lastModification = Date.now()
 
-    try {
-        localStorageData.set(shortcutsList)
-        refreshSoftwareList()
-    } catch (err) {
-        alert('could not save the new software data in local storage.\ncheck console for more info')
-        console.log(err)
-    }
-})
+//     try {
+//         localStorageData.set(shortcutsList)
+//         refreshSoftwareList()
+//     } catch (err) {
+//         alert('could not save the new software data in local storage.\ncheck console for more info')
+//         console.log(err)
+//     }
+// })
 
 
 
@@ -164,7 +172,8 @@ document.getElementById('addNewSoftware').addEventListener('click', async () => 
 
 const refreshSoftwareList = () => {
     let list = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.software-list > li')
-    for (let index = 1; index < list.length - 1; index++)   list[index].remove();
+    console.log(list)
+    for (let index = 2; index < list.length; index++)   list[index].remove();
 
 
     let parser = new DOMParser();
@@ -183,7 +192,7 @@ const refreshSoftwareList = () => {
             <span class="total">12</span>
         </li>`
         let li = parser.parseFromString(htmlString, 'text/html')
-        list[0].after(li.body.firstChild)
+        list[1].after(li.body.firstChild)
     }
 }
 
@@ -194,7 +203,7 @@ const refreshSoftwareList = () => {
 
 const refreshShortcutList = (data) => {
     // remove old active shortcuts from ui
-    let list = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcuts > li')
+    let list = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcut-list > li')
     for (let index = 1; index < list.length; index++)   list[index].remove();
 
 
@@ -202,12 +211,15 @@ const refreshShortcutList = (data) => {
 
     for (const shortcut of data) {
         const htmlString = `<li>
-            <div>
-                <img src="${shortcut.icon}" alt="${shortcut.software}" title="${shortcut.software}">
-                <strong>${shortcut.usecase}</strong><span>${shortcut.shortcut.replace('⌨', ' + ')}</span>
-            </div>
-            <p>${shortcut.extrainfo}</p>
-        </li>`
+                                <div class="title-wrapper">
+                                    <img src="${shortcut.icon}" alt="${shortcut.software}" title="${shortcut.software}">
+                                    <div class="title">
+                                        <strong>${shortcut.usecase}</strong>
+                                        <span class="item-count">${shortcut.shortcut.replace('⌨', ' + ')}</span>
+                                    </div>
+                                </div>
+                                <p class="extra-info">${shortcut.extrainfo}</p>
+                            </li>`
         let li = parser.parseFromString(htmlString, 'text/html')
         list[0].after(li.body.firstChild)
     }
