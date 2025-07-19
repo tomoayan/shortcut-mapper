@@ -53,6 +53,8 @@ addEventListener('DOMContentLoaded', async () => {
                 if (keyList.includes(e.key)) {
                     console.warn(key + " - key is availble the the virtual keyboard list, error is somewhere else")
                 } else {
+                    // console.clear()
+                    // console.log(key)
                     console.error(key + " - key is not availble on the virtual keyboard. Please report this on github issues")
                 }
                 console.log(e)
@@ -85,7 +87,7 @@ const keyboard_load = async () => {
     const keyboard_wrapper = document.getElementById('keyboard-wrapper')
     keyboard_wrapper.innerHTML = extractedCode.groups.element + '<style>' + extractedCode.groups.style + '</style>';
 
-    const keyboard = document.querySelectorAll('.keyboard .row > div')
+    const keyboard = document.querySelectorAll('.keyboard button')
     for (const key of keyboard) {
         if (key.dataset.keyPrimary) keyDomList[key.dataset.keyPrimary] = key;
         if (key.dataset.keySecondary) keyDomList[key.dataset.keySecondary] = key;
