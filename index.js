@@ -10,6 +10,7 @@
 
 import * as localStorageData from "./modules/localStorageManager.js"
 import * as keyboardManager from "./modules/nav/keyboardManager.js"
+import "./modules/nav/newSoftwareShortcut.js"
 // import * as gdrive from "./drive.js";
 
 let isLogin = true
@@ -187,29 +188,3 @@ const refreshShortcutSoftwareList = (activeShortcutList) => {
         shortcutList[0].after(li.body.firstChild)
     })
 }
-
-
-
-
-
-
-// document.getElementById('addNewSoftware').addEventListener('click', async () => {
-//     let softwareName = prompt("New software name", "");
-//     let softwareIconURL = prompt("New software icon url", "");
-
-//     if (!(softwareName && softwareIconURL)) return alert('fill both values!')
-
-//     shortcutsList.softwares[softwareName] = {
-//         icon: softwareIconURL,
-//         shortcuts: {}
-//     }
-//     shortcutsList.lastModification = Date.now()
-
-//     try {
-//         localStorageData.set(shortcutsList)
-//         refreshSoftwareList()
-//     } catch (err) {
-//         alert('could not save the new software data in local storage.\ncheck console for more info')
-//         console.log(err)
-//     }
-// })
