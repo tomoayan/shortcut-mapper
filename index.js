@@ -16,36 +16,7 @@ import "./modules/nav/newSoftwareShortcut.js"
 let isLogin = true
 let activeKeys = []
 let keyDomList = keyboardManager.keyDomList
-let shortcutsList = {
-    lastModification: 0,
-    softwares: {
-        "Davinci Resolve": {
-            icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/DaVinci_Resolve_17_logo.svg/240px-DaVinci_Resolve_17_logo.svg.png",
-            shortcuts: [
-                {
-                    usecase: "copy url",
-                    extrainfo: "lol",
-                    shortcut: "Shift⌨Control⌨1"
-                },
-                {
-                    usecase: "copy url",
-                    extrainfo: "lol",
-                    shortcut: "Shift⌨2"
-                },
-                {
-                    usecase: "copy url",
-                    extrainfo: "lol",
-                    shortcut: "Alt⌨c"
-                },
-                {
-                    usecase: "copy url",
-                    extrainfo: "lol",
-                    shortcut: "f"
-                }
-            ]
-        }
-    }
-}
+const shortcutsListReadonly = localStorageData.shortcutsList
 
 
 
@@ -80,8 +51,7 @@ addEventListener('DOMContentLoaded', async () => {
         });
     }, 500);
 
-    // Other Functions
-    // shortcutsList = await localStorageData.get()
+    await localStorageData.update();
     sortActiveShortcutSoftwares()
 })
 
@@ -89,29 +59,31 @@ addEventListener('DOMContentLoaded', async () => {
 
 
 
-let isAvtiveShortcutMatched = (arr1, arr2) => {
-    if (arr1.length !== arr2.length) {
-        return false;
-    }
 
-    // Sort both arrs
-    const sortedArr1 = arr1.slice().sort();
-    const sortedArr2 = arr2.slice().sort();
-
-    // If not matched, return false
-    for (let i = 0; i < sortedArr1.length; i++) {
-        if (sortedArr1[i] !== sortedArr2[i]) return false;
-    };
-
-    return true
-}
 
 
 
 
 
 const sortActiveShortcutSoftwares = async () => {
+    const isAvtiveShortcutMatched = (arr1, arr2) => {
+        if (arr1.length !== arr2.length) {
+            return false;
+        }
+
+        // Sort both arrs
+        const sortedArr1 = arr1.slice().sort();
+        const sortedArr2 = arr2.slice().sort();
+
+        // If not matched, return false
+        for (let i = 0; i < sortedArr1.length; i++) {
+            if (sortedArr1[i] !== sortedArr2[i]) return false;
+        };
+
+        return true
+    }
     let activeShortcutLists = [];
+    const shortcutsList = shortcutsListReadonly.content;
 
     for (const softwareName in shortcutsList.softwares) {
         let filteredShortcuts;
@@ -122,7 +94,7 @@ const sortActiveShortcutSoftwares = async () => {
                 .filter((sCut) => isAvtiveShortcutMatched(sCut.shortcut.split('⌨'), activeKeys));
         }
 
-        if (filteredShortcuts.length < 1) break
+        if (filteredShortcuts.length === 0) break
 
         const softwareIcon = shortcutsList.softwares[softwareName].icon;
         filteredShortcuts.forEach(shortcut => {
