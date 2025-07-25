@@ -20,3 +20,4 @@ Shortcut Mapper is a tool that helps you visualize and understand keyboard short
 ###### Backup
 - [ ] GDrive Login
 - [ ] Extra: AppDataStorage View
+- [ ] Shows changes between different shortcut backup files
