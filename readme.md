@@ -21,3 +21,7 @@ Shortcut Mapper is a tool that helps you visualize and understand keyboard short
 - [ ] GDrive Login
 - [ ] Extra: AppDataStorage View
 - [ ] Shows changes between different shortcut backup files
+
+
+###### Backend
+- Diff module for managing components
