@@ -1,0 +1,356 @@
+<tomo-element>
+    <div id="popup" class="popup-wrapper">
+        <div class="popup-box">
+            <div class="heading">
+                <h3></h3>
+                <svg id="close" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-x-icon lucide-x">
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                </svg>
+            </div>
+            <div class="content">
+
+
+
+                <div class="new-software">
+                    <div class="basic">
+                        <div class="select-image">
+                            <label for="select-file">Select<br>Image</label>
+                            <img src="">
+                            <input id="select-file" type="file" accept="image/*" placeholder="Logo">
+                        </div>
+                        <input id="softwareName" type="software-name" placeholder="Enter Software Name">
+                    </div>
+                    <div class="folder-wrapper">
+                        <h3>Folders</h3>
+                        <p>Coming Soon...</p>
+                    </div>
+                </div>
+
+
+
+                <div class="new-shortcut">
+                    <div>
+                        <label>Shortcut</label>
+                        <div id="shortcut" tabindex="0" data-placeholder="Enter your shortcut">
+                            <span>A</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="shortcutName">Name</label>
+                        <input id="shortcutName" type="text" placeholder="Shortcut Name">
+                    </div>
+                    <div>
+                        <label for="shortcutDetails">Details</label>
+                        <textarea id="shortcutDetails" placeholder="shortcut details"></textarea>
+                    </div>
+                    <h3>Software</h3>
+                    <div class="software-list">
+                        <div>
+                            <input type="radio" id="selectsoftware1" name="software" value="Davinci Resolve" />
+                            <label for="selectsoftware1">
+                                <img src="./img/DaVinci_Resolve_17_logo.svg.png" alt="Davinci Resolve">
+                                <span>Davinci Resolve</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <button id="create">Create</button>
+            </div>
+        </div>
+    </div>
+</tomo-element>
+
+<style>
+    @keyframes blinking {
+        0% {
+            opacity: 0;
+        }
+
+        50% {
+            opacity: .5;
+        }
+
+        100% {
+            opacity: 0;
+        }
+    }
+
+
+    .popup-wrapper {
+        position: absolute;
+        inset: 0;
+        z-index: 95;
+        background-color: hsla(0, 0%, 0%, 0.6);
+        display: grid;
+        place-content: center;
+        backdrop-filter: blur(.5rem);
+
+        & .popup-box {
+            background-color: var(--nav-background);
+            border-radius: 1rem;
+            border: 1px solid var(--nav-border);
+            box-shadow: 0 0 5rem 3rem hsl(0, 0%, 0%, .5);
+            min-width: 28rem;
+            max-width: 50rem;
+            max-height: 80vw;
+
+            & .heading {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 1px solid var(--nav-border);
+                padding: .5rem 1rem;
+
+                & h3 {
+                    font-size: 1rem;
+                    font-weight: 600;
+                    color: hsla(0, 0%, 90%);
+                }
+
+                & svg {
+                    cursor: pointer;
+                }
+            }
+
+            & .content {
+                padding: 1rem;
+
+                & input,
+                & textarea {
+                    border-radius: .3rem;
+                    padding: .5rem 1rem;
+                    background-color: hsl(0, 0%, 15%);
+                    border: 1px solid var(--nav-border);
+                    font-weight: 500;
+                    font-size: .9rem;
+
+                    &:focus-visible {
+                        outline: none;
+                    }
+                }
+
+                & button {
+                    display: block;
+                    border: 1px solid hsl(0, 0%, 30%);
+                    background-color: hsl(0, 0%, 25%);
+                    border-radius: .3rem;
+                    padding: .5rem 0;
+                    width: 50%;
+                    font-weight: 500;
+                    margin: 1.5rem auto 0;
+                    cursor: pointer;
+                }
+
+
+
+
+
+
+                & .new-software {
+
+                    & .basic {
+                        display: flex;
+                        align-items: center;
+                        gap: .5rem;
+
+
+                        & .select-image {
+                            width: 4rem;
+                            height: 4rem;
+                            position: relative;
+                            border-radius: .3rem;
+                            overflow: hidden;
+
+                            & input {
+                                display: none;
+                            }
+
+                            & label {
+                                position: absolute;
+                                inset: 0;
+                                display: grid;
+                                place-content: center;
+                                font-size: .7rem;
+                                cursor: pointer;
+                                z-index: 97;
+                                background-color: hsl(from var(--nav-border) h s l / .5);
+                                user-select: none;
+                                transition: opacity .1s, background-color .1s;
+
+                                &:has(+ img:not([src=""])):not(:hover) {
+                                    opacity: 0;
+                                    background-color: hsl(from var(--nav-border) h s l / .7);
+                                }
+                            }
+
+                            & img {
+                                position: absolute;
+                                width: 100%;
+                                height: 100%;
+                                cursor: pointer;
+                                z-index: 96;
+
+                                &[src=""] {
+                                    display: none;
+                                }
+                            }
+                        }
+
+                        & input {
+                            flex-grow: 1;
+                            width: auto;
+                            height: 2rem;
+                            background-color: hsl(from var(--nav-border) h s l / .5);
+
+                            &::placeholder {
+                                opacity: .5;
+                            }
+                        }
+                    }
+
+
+                    & .folder-wrapper {
+                        font-size: .8rem;
+                        padding: 1rem 0;
+
+                        & h3 {}
+
+                        & p {
+                            display: grid;
+                            justify-content: center;
+                        }
+                    }
+
+                }
+
+
+
+
+
+
+                & h3:has(+ .software-list) {
+                    font-size: 1rem;
+                    font-weight: 600;
+                }
+
+                & .new-shortcut {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+
+                    &>div:has(#shortcut) {
+
+                        &>div {
+                            border-radius: .3rem;
+                            padding: .5rem 1rem;
+                            background-color: hsl(0, 0%, 15%);
+                            border: 1px solid var(--nav-border);
+                            font-weight: 500;
+                            font-size: .9rem;
+                            outline: none;
+
+                            & span {
+                                background-color: hsl(0, 0%, 25%);
+                                padding: .2rem .6rem;
+                                border-radius: .5rem;
+                                margin-right: .5rem;
+                                position: relative;
+                                font-size: .8rem;
+                            }
+
+                            &:not(:focus):not(:has(span))::before {
+                                content: attr(data-placeholder);
+                                font-size: .8rem;
+                                opacity: .8;
+                                font-weight: 400;
+                            }
+
+                            &:focus {
+                                &:not(:has(span))::after {
+                                    content: '|';
+                                    color: var(--root-font-color);
+                                    opacity: .5;
+                                    animation: blinking 1s linear infinite alternate;
+                                }
+
+                                & span:last-child::after {
+                                    position: absolute;
+                                    right: -.6rem;
+                                    content: '|';
+                                    color: var(--root-font-color);
+                                    opacity: .5;
+                                    animation: blinking 1s linear infinite alternate;
+                                }
+                            }
+                        }
+
+                    }
+
+                    &>div {
+                        display: flex;
+                        flex-direction: column;
+                        gap: .5rem;
+
+                        & label {
+                            font-weight: 600;
+                            font-size: .9rem;
+                        }
+
+                        & textarea {
+                            min-height: 5rem;
+                            min-width: 100%;
+                            max-width: 100%;
+
+                            &:focus-visible {
+                                outline: none;
+                            }
+                        }
+                    }
+
+                    &>div.software-list {
+                        flex-direction: row;
+                        flex-wrap: wrap;
+
+                        &>div {
+                            border-radius: 1rem;
+                            background-color: hsl(0, 0%, 15%);
+                            opacity: .5;
+
+                            & input {
+                                display: none;
+                            }
+
+                            & label {
+                                display: flex;
+                                gap: .2rem;
+                                align-items: center;
+                                font-size: .85rem;
+                                font-weight: 500;
+                                padding: .4rem .8rem;
+                                cursor: pointer;
+                                user-select: none;
+
+                                & img {
+                                    width: 1.2rem;
+                                    height: 1.2rem;
+                                    border-radius: .3rem;
+                                }
+                            }
+
+                            &:has(input:checked) {
+                                opacity: 1;
+                            }
+                        }
+
+
+                    }
+                }
+            }
+        }
+    }
+</style>

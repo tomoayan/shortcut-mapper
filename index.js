@@ -94,7 +94,7 @@ const sortActiveShortcutSoftwares = async () => {
                 .filter((sCut) => isAvtiveShortcutMatched(sCut.shortcut.split('⌨'), activeKeys));
         }
 
-        if (filteredShortcuts.length === 0) break
+        if (filteredShortcuts.length === 0) continue
 
         const softwareIcon = shortcutsList.softwares[softwareName].icon;
         filteredShortcuts.forEach(shortcut => {

@@ -48,8 +48,11 @@ const _deepFreeze = (obj) => {
     return obj;
 }
 const updateReadOnly = () => shortcutsList.content = _deepFreeze(structuredClone(_shortcutsListPrivate));
-const isNonEmptyString = (data) => typeof data.softwareName === "string" && data.softwareName.trim().length > 0
-const updateLocalStorage = () => localStorage.setItem("shortcuts", JSON.stringify(_shortcutsListPrivate));
+const isNonEmptyString = (data) => typeof data === "string" && data.trim().length > 0;
+const updateLocalStorage = () => {
+    _shortcutsListPrivate.lastModification = Date.now()
+    localStorage.setItem("shortcuts", JSON.stringify(_shortcutsListPrivate));
+}
 
 
 
@@ -127,11 +130,10 @@ export const addShortcut = (data) => {
             const haveExtrainfo = isNonEmptyString(data.extrainfo);
             const haveShortcut = isNonEmptyString(data.shortcut)
 
-            if (!haveSoftwareName || !haveUsecase || !haveExtrainfo || !haveShortcut) {
+            if (!haveSoftwareName || !haveUsecase || !haveShortcut) {
                 alert(`Missing Fields:
                     ${!haveSoftwareName ? "\nSoftware" : ""}
                     ${!haveUsecase ? "\nName" : ""}
-                    ${!haveExtrainfo ? "\nSDetails" : ""}
                     ${!haveShortcut ? "\nShortcut" : ""}
                     `)
                 return reject()
