@@ -12,6 +12,7 @@ import * as localStorageData from "./modules/localStorageManager.js"
 import * as keyboardManager from "./modules/nav/keyboardManager.js"
 import "./modules/nav/newSoftwareShortcut.js"
 // import * as gdrive from "./drive.js";
+import './modules/data.js'
 
 let isLogin = true
 let activeKeys = []
