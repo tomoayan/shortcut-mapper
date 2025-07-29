@@ -11,6 +11,7 @@
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
     <script src="./index.js" type="module" defer></script>
+    <script src="./modules/navHelper.js" type="module" defer></script>
     <link rel="stylesheet" href="./base.css">
     <link rel="stylesheet" href="./style.css">
     <title>Shortcuts</title>
@@ -24,35 +25,46 @@
                 Keyboard<br><span>Mapper</span>
             </h1>
         </div>
-        <ul>
-            <li>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-user-icon lucide-user">
-                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                </svg>
-                <button id="auth_login" disabled>Login</button>
-            </li>
-            <li>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-keyboard-icon lucide-keyboard">
-                    <path d="M10 8h.01" />
-                    <path d="M12 12h.01" />
-                    <path d="M14 8h.01" />
-                    <path d="M16 12h.01" />
-                    <path d="M18 8h.01" />
-                    <path d="M6 8h.01" />
-                    <path d="M7 16h10" />
-                    <path d="M8 12h.01" />
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                </svg>
-                <select id="keyboard-selector">
-                    <option value="/keyboard/generic.html">Gengeric</option>
-                </select>
-            </li>
-        </ul>
+        <div class="ul-wrapper">
+            <ul class="primary">
+                <li id="auth_login" class="disabled">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-user-icon lucide-user">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    Login
+                </li>
+                <li id="keyboardSelector">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-keyboard-icon lucide-keyboard">
+                        <path d="M10 8h.01" />
+                        <path d="M12 12h.01" />
+                        <path d="M14 8h.01" />
+                        <path d="M16 12h.01" />
+                        <path d="M18 8h.01" />
+                        <path d="M6 8h.01" />
+                        <path d="M7 16h10" />
+                        <path d="M8 12h.01" />
+                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                    </svg>
+                    Layout
+                </li>
+            </ul>
+
+            <ul class="secondary">
+                <li class="nav">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chevron-left-icon lucide-chevron-left">
+                        <path d="m15 18-6-6 6-6" />
+                    </svg>
+                    Back
+                </li>
+            </ul>
+        </div>
     </nav>
 
     <div class="content-wrapper">
