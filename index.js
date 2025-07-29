@@ -1,12 +1,9 @@
 import { shortcutList, activeKeyboardKeys, isKeyboardPause, keyDomListRaw } from "./modules/data.js"
 import * as localStorageData from "./modules/localStorageManager.js"
-// import * as keyboardManager from "./modules/nav/keyboardManager.js"
 import "./modules/nav/newSoftwareShortcut.js"
 // import * as gdrive from "./drive.js";
 
 let isLogin = true
-// let activeKeys = []
-
 
 addEventListener('DOMContentLoaded', async () => {
     
