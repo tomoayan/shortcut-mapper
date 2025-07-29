@@ -1,12 +1,4 @@
-// 
-// 
-// 
-// THIS FILE **MOSTLY** CONTAIN SHORTCUT LIST RELATED CODE
-// 
-// 
-// 
-
-import { shortcutList, activeKeyboardKeys, activeShortcutList } from "./modules/data.js"
+import { shortcutList, activeKeyboardKeys } from "./modules/data.js"
 import * as localStorageData from "./modules/localStorageManager.js"
 import * as keyboardManager from "./modules/nav/keyboardManager.js"
 import "./modules/nav/newSoftwareShortcut.js"
@@ -15,8 +7,6 @@ import "./modules/nav/newSoftwareShortcut.js"
 let isLogin = true
 // let activeKeys = []
 let keyDomList = keyboardManager.keyDomList
-// const shortcutsListReadonly = shortcutList
-
 
 
 addEventListener('DOMContentLoaded', async () => {
@@ -25,21 +15,20 @@ addEventListener('DOMContentLoaded', async () => {
     setTimeout(() => {
         document.addEventListener('keydown', function (event) {
             const key = event.key;
-            const activeKeys = activeKeyboardKeys.value;
+            const activeKeyboardKeysTMP = activeKeyboardKeys.value;
 
             try {
-                if (!activeKeys.includes(key)) {
+                if (!activeKeyboardKeysTMP.includes(key)) {
                     // Key not active, so activate it!
-                    activeKeys.push(key);
-                    activeKeyboardKeys.set(activeKeys)
+                    activeKeyboardKeysTMP.push(key);
+                    activeKeyboardKeys.set(activeKeyboardKeysTMP)
                     keyDomList[key].classList.add("active");
                 } else {
-                    const keyIndex = activeKeys.indexOf(key);
-                    activeKeys.splice(keyIndex, 1);
-                    activeKeyboardKeys.set(activeKeys)
+                    const keyIndex = activeKeyboardKeysTMP.indexOf(key);
+                    activeKeyboardKeysTMP.splice(keyIndex, 1);
+                    activeKeyboardKeys.set(activeKeyboardKeysTMP)
                     keyDomList[key].classList.remove("active");
                 }
-                // sortActiveShortcutSoftwares()
             } catch (e) {
                 const keyList = Object.keys(keyDomList)
                 if (keyList.includes(e.key)) {
@@ -63,9 +52,13 @@ addEventListener('DOMContentLoaded', async () => {
 
 
 
-const sortActiveShortcutSoftwares = () => {
-    console.log('activeKeyboardKeys')
+const sortActiveShortcutSoftware = () => {
+    console.warn('activeKeyboardKeys started')
 
+    // utils
+    let activeKeys = activeKeyboardKeys.value;
+    let activeShortcutList = [];
+    let parser = new DOMParser();
     const isAvtiveShortcutMatched = (arr1, arr2) => {
         if (arr1.length !== arr2.length) {
             return false;
@@ -83,8 +76,24 @@ const sortActiveShortcutSoftwares = () => {
         return true
     }
 
-    let activeKeys = activeKeyboardKeys.value
-    let activeShortcutListTMP = [];
+
+
+    let softwareList = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.software-list > li');
+    for (let index = 2; index < softwareList.length; index++) softwareList[index].remove(); // remove exsiting
+    for (const [key, val] of Object.entries(shortcutList.value.softwares)) {
+        const softwareElHtmlString = `<li data-software="${key}">
+                                        <span>
+                                            <img src="${val.icon}" alt="${key}">
+                                            ${key}
+                                        </span>
+                                        <span class="total">0</span>
+                                    </li>`
+        // console.log(softwareElHtmlString)
+        let li = parser.parseFromString(softwareElHtmlString, 'text/html')
+        softwareList[1].after(li.body.firstChild)
+    }
+
+
 
     for (const [softwareName, softwareValue] of Object.entries(shortcutList.value.softwares)) {
         let filteredShortcuts;
@@ -99,7 +108,7 @@ const sortActiveShortcutSoftwares = () => {
 
         const softwareIcon = softwareValue.icon;
         filteredShortcuts.forEach(shortcut => {
-            activeShortcutListTMP.push({
+            activeShortcutList.push({
                 software: softwareName,
                 icon: softwareIcon,
                 shortcut: shortcut.shortcut,
@@ -109,50 +118,17 @@ const sortActiveShortcutSoftwares = () => {
         });
     }
 
-    activeShortcutList.set(activeShortcutListTMP)
-}
 
 
 
-
-activeKeyboardKeys.subscribe(sortActiveShortcutSoftwares)
-shortcutList.subscribe(sortActiveShortcutSoftwares)
-
+    let shortcutListDOM = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcut-list > li');
+    for (let index = 1; index < shortcutListDOM.length; index++) shortcutListDOM[index].remove(); // remove existing
 
 
+    for (const sCut of activeShortcutList) {
+        const softwareCountEl = document.querySelector(`.content-wrapper > .shortcut-wrapper > ul.software-list > li[data-software="${sCut.software}"] > span.total`);
+        if (softwareCountEl) softwareCountEl.innerText = Number(softwareCountEl.innerText) + 1
 
-
-activeShortcutList.subscribe((newVal) => {
-    console.log(newVal)
-
-    let softwareList = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.software-list > li');
-    let shortcutList = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcut-list > li');
-
-    // Remove existing items from list
-    for (let index = 2; index < softwareList.length; index++) softwareList[index].remove();
-    for (let index = 1; index < shortcutList.length; index++) shortcutList[index].remove();
-
-
-    let parser = new DOMParser();
-    let addedSoftwares = []
-
-
-    newVal.forEach((sCut) => {
-        if (!addedSoftwares.includes(sCut.software)) {
-            const softwareElHtmlString = `<li data-software="${sCut.software}">
-                                    <span>
-                                        <img src="${sCut.icon}" alt="${sCut.software}">
-                                        ${sCut.software}
-                                    </span>
-                                    <span class="total">1</span>
-                                </li>`
-            let li = parser.parseFromString(softwareElHtmlString, 'text/html')
-            softwareList[1].after(li.body.firstChild)
-            addedSoftwares.push(sCut.software)
-        } else {
-            const softwareCountEl = document.querySelector(`.content-wrapper > .shortcut-wrapper > ul.software-list > li[data-software="${sCut.software}"] > span.total`);
-            softwareCountEl.innerText = Number(softwareCountEl.innerText) + 1
-        }
 
         const shortcutElHtmlString = `<li>
                                 <div class="title-wrapper">
@@ -165,6 +141,12 @@ activeShortcutList.subscribe((newVal) => {
                                 <p class="extra-info">${sCut.extrainfo}</p>
                             </li>`
         let li = parser.parseFromString(shortcutElHtmlString, 'text/html')
-        shortcutList[0].after(li.body.firstChild)
-    })
-})
+        shortcutListDOM[0].after(li.body.firstChild)
+    }
+
+    console.warn('activeKeyboardKeys ended')
+}
+
+
+activeKeyboardKeys.subscribe(sortActiveShortcutSoftware)
+shortcutList.subscribe(sortActiveShortcutSoftware)

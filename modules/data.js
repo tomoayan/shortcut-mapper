@@ -5,4 +5,3 @@ export const shortcutList = new Reactor({
     softwares: {}
 })
 export const activeKeyboardKeys = new Reactor([])
-export const activeShortcutList = new Reactor([])
