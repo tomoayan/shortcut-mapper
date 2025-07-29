@@ -1,4 +1,4 @@
-import { shortcutList } from "../data.js";
+import { isKeyboardPause, shortcutList } from "../data.js";
 import * as localStorageManager from "../localStorageManager.js"
 
 let popUpBoxTemplate = document.createElement("template");;
@@ -43,6 +43,7 @@ const getBase64Data = (file) => {
 
 // New Software
 document.getElementById('addNewSoftware').addEventListener('click', async () => {
+    isKeyboardPause.set(true)
     const controller = new AbortController()
 
     const newPopup = popUpBoxTemplate.content.cloneNode(true).firstElementChild
@@ -86,6 +87,7 @@ document.getElementById('addNewSoftware').addEventListener('click', async () => 
     const clearPopup = () => {
         newPopup.remove();
         controller.abort();
+        isKeyboardPause.set(false)
     }
 })
 
@@ -95,6 +97,7 @@ document.getElementById('addNewSoftware').addEventListener('click', async () => 
 
 // New Shortcut
 document.getElementById('addNewShortcut').addEventListener('click', async () => {
+    isKeyboardPause.set(true)
     const controller = new AbortController()
 
     const newPopup = popUpBoxTemplate.content.cloneNode(true).firstElementChild
@@ -191,5 +194,6 @@ document.getElementById('addNewShortcut').addEventListener('click', async () => 
     const clearPopup = () => {
         newPopup.remove();
         controller.abort();
+    isKeyboardPause.set(false)
     }
 })

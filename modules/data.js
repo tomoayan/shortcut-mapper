@@ -5,3 +5,4 @@ export const shortcutList = new Reactor({
     softwares: {}
 })
 export const activeKeyboardKeys = new Reactor([])
+export const isKeyboardPause = new Reactor(false)

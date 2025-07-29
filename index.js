@@ -1,4 +1,4 @@
-import { shortcutList, activeKeyboardKeys } from "./modules/data.js"
+import { shortcutList, activeKeyboardKeys, isKeyboardPause } from "./modules/data.js"
 import * as localStorageData from "./modules/localStorageManager.js"
 import * as keyboardManager from "./modules/nav/keyboardManager.js"
 import "./modules/nav/newSoftwareShortcut.js"
@@ -14,6 +14,7 @@ addEventListener('DOMContentLoaded', async () => {
     // Event: Keydown
     setTimeout(() => {
         document.addEventListener('keydown', function (event) {
+            if (isKeyboardPause.value) return
             const key = event.key;
             const activeKeyboardKeysTMP = activeKeyboardKeys.value;
 
