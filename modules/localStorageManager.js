@@ -1,67 +1,57 @@
+import { shortcutList } from "./data.js"
+
 const initShortcutsData = {
     lastModification: Date.now(),
     softwares: {}
 }
-const _shortcutsListPrivate = {
-    lastModification: 0,
-    softwares: {}
-    // softwares: {
-    //     "Davinci Resolve": {
-    //         icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/DaVinci_Resolve_17_logo.svg/240px-DaVinci_Resolve_17_logo.svg.png",
-    //         shortcuts: [
-    //             {
-    //                 usecase: "copy url",
-    //                 extrainfo: "lol",
-    //                 shortcut: "Shift⌨Control⌨1"
-    //             },
-    //             {
-    //                 usecase: "copy url",
-    //                 extrainfo: "lol",
-    //                 shortcut: "Shift⌨2"
-    //             },
-    //             {
-    //                 usecase: "copy url",
-    //                 extrainfo: "lol",
-    //                 shortcut: "Alt⌨c"
-    //             },
-    //             {
-    //                 usecase: "copy url",
-    //                 extrainfo: "lol",
-    //                 shortcut: "f"
-    //             }
-    //         ]
-    //     }
-    // }
-}
+// const _shortcutsListPrivate = {
+//     lastModification: 0,
+//     softwares: {}
+//     // softwares: {
+//     //     "Davinci Resolve": {
+//     //         icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/DaVinci_Resolve_17_logo.svg/240px-DaVinci_Resolve_17_logo.svg.png",
+//     //         shortcuts: [
+//     //             {
+//     //                 usecase: "copy url",
+//     //                 extrainfo: "lol",
+//     //                 shortcut: "Shift⌨Control⌨1"
+//     //             },
+//     //             {
+//     //                 usecase: "copy url",
+//     //                 extrainfo: "lol",
+//     //                 shortcut: "Shift⌨2"
+//     //             },
+//     //             {
+//     //                 usecase: "copy url",
+//     //                 extrainfo: "lol",
+//     //                 shortcut: "Alt⌨c"
+//     //             },
+//     //             {
+//     //                 usecase: "copy url",
+//     //                 extrainfo: "lol",
+//     //                 shortcut: "f"
+//     //             }
+//     //         ]
+//     //     }
+//     // }
+// }
 
 
 
 
-
-const _deepFreeze = (obj) => {
-    Object.freeze(obj);
-    Object.getOwnPropertyNames(obj).forEach(prop => {
-        if (obj[prop] !== null && typeof obj[prop] === 'object' && !Object.isFrozen(obj[prop])) {
-            _deepFreeze(obj[prop]);
-        }
-    });
-    return obj;
-}
-const updateReadOnly = () => shortcutsList.content = _deepFreeze(structuredClone(_shortcutsListPrivate));
 const isNonEmptyString = (data) => typeof data === "string" && data.trim().length > 0;
-const updateLocalStorage = () => {
-    _shortcutsListPrivate.lastModification = Date.now()
-    localStorage.setItem("shortcuts", JSON.stringify(_shortcutsListPrivate));
-}
+shortcutList.subscribe((newVal) => {
+    if (newVal) {
+        newVal.lastModification = Date.now()
+        localStorage.setItem("shortcuts", JSON.stringify(newVal));
+    }
+})
 
 
 
-export const shortcutsList = {
-    content: undefined
-};
 
 
-export const update = () => {
+export const init = () => {
     return new Promise((resolve, reject) => {
 
         try {
@@ -72,9 +62,7 @@ export const update = () => {
 
             if (localStorage.getItem("shortcuts")) {
                 const shortcutsData = JSON.parse(localStorage.getItem("shortcuts"))
-                _shortcutsListPrivate.lastModification = shortcutsData.lastModification;
-                Object.assign(_shortcutsListPrivate.softwares, shortcutsData.softwares);
-                updateReadOnly()
+                shortcutList.set(shortcutsData)
                 resolve()
             }
         } catch (err) {
@@ -99,13 +87,14 @@ export const addSoftware = (data) => {
                 return reject()
             }
 
-            _shortcutsListPrivate.softwares[data.softwareName] = {
+
+            const shortcutListTMP = shortcutList.value;
+            shortcutListTMP.softwares[data.softwareName] = {
                 icon: data.icon,
                 shortcuts: []
             }
-            
-            updateLocalStorage()
-            updateReadOnly()
+            shortcutList.set(shortcutListTMP)
+
             resolve()
         } catch (err) {
             reject(err)
@@ -139,14 +128,14 @@ export const addShortcut = (data) => {
                 return reject()
             }
 
-            _shortcutsListPrivate.softwares[data.software].shortcuts.push({
+            const shortcutListTMP = shortcutList.value;
+            shortcutListTMP.softwares[data.software].shortcuts.push({
                 usecase: data.usecase,
                 extrainfo: data.extrainfo,
                 shortcut: data.shortcut
             })
+            shortcutList.set(shortcutListTMP)
 
-            updateLocalStorage()
-            updateReadOnly()
             resolve()
         } catch (err) {
             console.error(err)

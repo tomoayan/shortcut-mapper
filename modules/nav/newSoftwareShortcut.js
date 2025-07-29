@@ -1,3 +1,4 @@
+import { shortcutList } from "../data.js";
 import * as localStorageManager from "../localStorageManager.js"
 
 let popUpBoxTemplate = document.createElement("template");;
@@ -85,7 +86,6 @@ document.getElementById('addNewSoftware').addEventListener('click', async () => 
     const clearPopup = () => {
         newPopup.remove();
         controller.abort();
-        localStorageManager.update()
     }
 })
 
@@ -142,7 +142,7 @@ document.getElementById('addNewShortcut').addEventListener('click', async () => 
     const selectSoftwareList = newPopup.querySelector('.software-list');
     const softwareSelectElTemplate = selectSoftwareList.children[0]
     selectSoftwareList.children[0].remove()
-    const softwareList = Object.keys(localStorageManager.shortcutsList.content.softwares);
+    const softwareList = Object.keys(shortcutList.value.softwares);
 
     softwareList.forEach((softwareName) => {
         let element = softwareSelectElTemplate.cloneNode(true);
@@ -151,7 +151,7 @@ document.getElementById('addNewShortcut').addEventListener('click', async () => 
         element.querySelector('input').id = 'shortcutmapper' + softwareName;
         element.querySelector('label').setAttribute('for', 'shortcutmapper' + softwareName);
         element.querySelector('label > span').textContent = softwareName;
-        element.querySelector('img').src = localStorageManager.shortcutsList.content.softwares[softwareName].icon;
+        element.querySelector('img').src = shortcutList.value.softwares[softwareName].icon;
 
         newPopup.querySelector('.software-list').appendChild(element)
     })
@@ -191,6 +191,5 @@ document.getElementById('addNewShortcut').addEventListener('click', async () => 
     const clearPopup = () => {
         newPopup.remove();
         controller.abort();
-        localStorageManager.update()
     }
 })

@@ -6,18 +6,16 @@
 // 
 // 
 
-
-
+import { shortcutList } from "./modules/data.js"
 import * as localStorageData from "./modules/localStorageManager.js"
 import * as keyboardManager from "./modules/nav/keyboardManager.js"
 import "./modules/nav/newSoftwareShortcut.js"
 // import * as gdrive from "./drive.js";
-import './modules/data.js'
 
 let isLogin = true
 let activeKeys = []
 let keyDomList = keyboardManager.keyDomList
-const shortcutsListReadonly = localStorageData.shortcutsList
+const shortcutsListReadonly = shortcutList
 
 
 
@@ -52,7 +50,7 @@ addEventListener('DOMContentLoaded', async () => {
         });
     }, 500);
 
-    await localStorageData.update();
+    await localStorageData.init();
     sortActiveShortcutSoftwares()
 })
 
@@ -84,7 +82,7 @@ const sortActiveShortcutSoftwares = async () => {
         return true
     }
     let activeShortcutLists = [];
-    const shortcutsList = shortcutsListReadonly.content;
+    const shortcutsList = shortcutsListReadonly.value;
 
     for (const softwareName in shortcutsList.softwares) {
         let filteredShortcuts;
