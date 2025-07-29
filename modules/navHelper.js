@@ -1,3 +1,6 @@
+import { keyDomListRaw } from "./data.js"
+
+
 
 const ulWrapper = document.querySelector("nav > .ul-wrapper")
 const closeActiveNavOptions = document.querySelector("nav > .ul-wrapper > ul.secondary > .nav")
@@ -14,7 +17,7 @@ const secNavActive = (querySelectorPath, options) => {
     document.querySelector(querySelectorPath)
         .addEventListener('click', () => {
             const controller = new AbortController();
-            
+
             ulWrapper.id = "secActive"
             ulWrapper.classList.add('changing-activeNavOptions')
             setTimeout(() => ulWrapper.classList.remove('changing-activeNavOptions'), 200);
@@ -45,15 +48,34 @@ const secNavActive = (querySelectorPath, options) => {
 
 
 // Options
-const keyboards = [{ name: "generic", filePath: "'/keyboard/generic.html'" }]
+const keyboards = [{ name: "generic", filePath: "/keyboard/generic.html" }]
 
 
 
 addEventListener('DOMContentLoaded', async () => {
-
+    
     // Keyboard Selector
-    const setKeyboard = (path) => {
-        console.log(path)
+    const setKeyboard = async (path) => {
+        const tomoElementExtractRegex = /<tomo-element>(?<element>.*)<\/tomo-element>.*?style>(?<style>.*)<\/style>/s;
+
+        let res;
+        try {
+            res = await fetch(path).then(res => res.text());
+        } catch (err) {
+            console.warn('error while fetching keyboard code')
+        }
+
+        let extractedCode = tomoElementExtractRegex.exec(res)
+        const keyboard_wrapper = document.getElementById('keyboard-wrapper')
+        keyboard_wrapper.innerHTML = extractedCode.groups.element + '<style>' + extractedCode.groups.style + '</style>';
+
+        const keyboard = document.querySelectorAll('.keyboard button')
+        for (const key in keyDomListRaw) delete keyDomListRaw[key];
+        for (const key of keyboard) {
+            if (key.dataset.keyPrimary) keyDomListRaw[key.dataset.keyPrimary] = key;
+            if (key.dataset.keySecondary) keyDomListRaw[key.dataset.keySecondary] = key;
+        }
+
     }
     let keyboardSelectorOptions = []
     keyboards.forEach(keyboard => {

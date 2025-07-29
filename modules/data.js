@@ -6,3 +6,4 @@ export const shortcutList = new Reactor({
 })
 export const activeKeyboardKeys = new Reactor([])
 export const isKeyboardPause = new Reactor(false)
+export const keyDomListRaw = {}
