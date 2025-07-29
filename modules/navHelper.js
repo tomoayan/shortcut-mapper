@@ -7,7 +7,7 @@ const closeActiveNavOptions = document.querySelector("nav > .ul-wrapper > ul.sec
 
 
 
-const secNavActive = (querySelectorPath, options) => {
+const secNavActive = (querySelectorPath, options, initFunc) => {
     // options: [{
     //     name: "name",
     //     icon: "svg url",
@@ -43,17 +43,19 @@ const secNavActive = (querySelectorPath, options) => {
             }, { signal: controller.signal })
         })
 
+    initFunc.ref(initFunc.value)
+
 
 }
 
 
 // Options
-const keyboards = [{ name: "generic", filePath: "/keyboard/generic.html" }]
+const keyboards = [{ name: "generic", filePath: "/keyboard/generic.html", default: true }]
 
 
 
 addEventListener('DOMContentLoaded', async () => {
-    
+
     // Keyboard Selector
     const setKeyboard = async (path) => {
         const tomoElementExtractRegex = /<tomo-element>(?<element>.*)<\/tomo-element>.*?style>(?<style>.*)<\/style>/s;
@@ -75,7 +77,6 @@ addEventListener('DOMContentLoaded', async () => {
             if (key.dataset.keyPrimary) keyDomListRaw[key.dataset.keyPrimary] = key;
             if (key.dataset.keySecondary) keyDomListRaw[key.dataset.keySecondary] = key;
         }
-
     }
     let keyboardSelectorOptions = []
     keyboards.forEach(keyboard => {
@@ -86,5 +87,5 @@ addEventListener('DOMContentLoaded', async () => {
             fnInput: keyboard.filePath
         })
     });
-    secNavActive("nav > .ul-wrapper > ul.primary > #keyboardSelector", keyboardSelectorOptions)
+    secNavActive("nav > .ul-wrapper > ul.primary > #keyboardSelector", keyboardSelectorOptions, { ref: setKeyboard, value: "/keyboard/generic.html" })
 })
