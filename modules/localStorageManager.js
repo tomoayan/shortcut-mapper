@@ -1,51 +1,16 @@
 import { shortcutList } from "./data.js"
 
-const initShortcutsData = {
-    lastModification: Date.now(),
-    softwares: {}
-}
-// const _shortcutsListPrivate = {
-//     lastModification: 0,
-//     softwares: {}
-//     // softwares: {
-//     //     "Davinci Resolve": {
-//     //         icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/DaVinci_Resolve_17_logo.svg/240px-DaVinci_Resolve_17_logo.svg.png",
-//     //         shortcuts: [
-//     //             {
-//     //                 usecase: "copy url",
-//     //                 extrainfo: "lol",
-//     //                 shortcut: "Shift⌨Control⌨1"
-//     //             },
-//     //             {
-//     //                 usecase: "copy url",
-//     //                 extrainfo: "lol",
-//     //                 shortcut: "Shift⌨2"
-//     //             },
-//     //             {
-//     //                 usecase: "copy url",
-//     //                 extrainfo: "lol",
-//     //                 shortcut: "Alt⌨c"
-//     //             },
-//     //             {
-//     //                 usecase: "copy url",
-//     //                 extrainfo: "lol",
-//     //                 shortcut: "f"
-//     //             }
-//     //         ]
-//     //     }
-//     // }
-// }
-
-
-
 
 const isNonEmptyString = (data) => typeof data === "string" && data.trim().length > 0;
-shortcutList.subscribe((newVal) => {
+
+const updateLocalStorage = (newVal) => {
     if (newVal) {
         newVal.lastModification = Date.now()
-        localStorage.setItem("shortcuts", JSON.stringify(newVal));
+        return localStorage.setItem("shortcuts", JSON.stringify(newVal));
     }
-})
+
+    alert('cannot update local storage, inpput was empty')
+}
 
 
 
@@ -55,11 +20,6 @@ export const init = () => {
     return new Promise((resolve, reject) => {
 
         try {
-            // If not exist
-            if (!localStorage.getItem("shortcuts")) {
-                localStorage.setItem("shortcuts", JSON.stringify(initShortcutsData));
-            }
-
             if (localStorage.getItem("shortcuts")) {
                 const shortcutsData = JSON.parse(localStorage.getItem("shortcuts"))
                 shortcutList.set(shortcutsData)
@@ -94,7 +54,7 @@ export const addSoftware = (data) => {
                 shortcuts: []
             }
             shortcutList.set(shortcutListTMP)
-
+            updateLocalStorage(shortcutListTMP)
             resolve()
         } catch (err) {
             reject(err)
@@ -135,7 +95,7 @@ export const addShortcut = (data) => {
                 shortcut: data.shortcut
             })
             shortcutList.set(shortcutListTMP)
-
+            updateLocalStorage(shortcutListTMP)
             resolve()
         } catch (err) {
             console.error(err)
