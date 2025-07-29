@@ -19,6 +19,10 @@ addEventListener('DOMContentLoaded', async () => {
             const activeKeyboardKeysTMP = activeKeyboardKeys.value;
 
             try {
+                if (!keyDomList[key]) {
+                    return console.error(`"${key}" doesn't exist in virtual keyboard! If you think this is an unexpected behaviour, please report this on github issues`)
+                }
+
                 if (!activeKeyboardKeysTMP.includes(key)) {
                     // Key not active, so activate it!
                     activeKeyboardKeysTMP.push(key);
@@ -31,14 +35,7 @@ addEventListener('DOMContentLoaded', async () => {
                     keyDomList[key].classList.remove("active");
                 }
             } catch (e) {
-                const keyList = Object.keys(keyDomList)
-                if (keyList.includes(e.key)) {
-                    console.warn(key + " - key is availble the the virtual keyboard list, error is somewhere else")
-                } else {
-                    // console.clear()
-                    // console.log(key)
-                    console.error(key + " - key is not availble on the virtual keyboard. Please report this on github issues")
-                }
+                console.error('error on keypress')
                 console.log(e)
             }
         });
