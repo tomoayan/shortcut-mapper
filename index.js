@@ -1,4 +1,4 @@
-import { shortcutList, activeKeyboardKeys, isKeyboardPause, keyDomListRaw } from "./modules/data.js"
+import { shortcutList, activeKeyboardKeys, isKeyboardPause, keyDomListRaw, isRawKeyInput } from "./modules/data.js"
 import * as localStorageData from "./modules/localStorageManager.js"
 import "./modules/nav/newSoftwareShortcut.js"
 // import * as gdrive from "./drive.js";
@@ -11,25 +11,28 @@ addEventListener('DOMContentLoaded', async () => {
     setTimeout(() => {
         document.addEventListener('keydown', function (event) {
             if (isKeyboardPause.value) return
-            const key = event.key;
+            let key;
+            console.log(isRawKeyInput.value)
+            if (isRawKeyInput.value) key = event.code;
+            if (!isRawKeyInput.value) key = event.key;
             let keyDomList = keyDomListRaw;
             const activeKeyboardKeysTMP = activeKeyboardKeys.value;
 
             try {
                 if (!keyDomList[key]) {
-                    return console.error(`"${key}" doesn't exist in virtual keyboard! If you think this is an unexpected behaviour, please report this on github issues`)
+                    console.error(`"${key}" doesn't exist in virtual keyboard! If you think this is an unexpected behaviour, please report this on github issues`)
                 }
 
                 if (!activeKeyboardKeysTMP.includes(key)) {
                     // Key not active, so activate it!
                     activeKeyboardKeysTMP.push(key);
                     activeKeyboardKeys.set(activeKeyboardKeysTMP)
-                    keyDomList[key].classList.add("active");
+                    if (keyDomList[key]) keyDomList[key].classList.add("active");
                 } else {
                     const keyIndex = activeKeyboardKeysTMP.indexOf(key);
                     activeKeyboardKeysTMP.splice(keyIndex, 1);
                     activeKeyboardKeys.set(activeKeyboardKeysTMP)
-                    keyDomList[key].classList.remove("active");
+                    if (keyDomList[key]) keyDomList[key].classList.remove("active");
                 }
             } catch (e) {
                 console.error('error on keypress')
