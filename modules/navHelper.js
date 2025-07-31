@@ -50,7 +50,7 @@ const secNavActive = (querySelectorPath, options, initFunc) => {
 
 
 // Options
-const keyboards = [{ name: "generic", filePath: "/keyboard/generic.html", default: true }]
+const keyboards = [{ name: "None", filePath: undefined }, { name: "Generic", filePath: "/keyboard/generic.html", default: true }]
 
 
 
@@ -58,6 +58,9 @@ addEventListener('DOMContentLoaded', async () => {
 
     // Keyboard Selector
     const setKeyboard = async (path) => {
+        const keyboard_wrapper = document.getElementById('keyboard-wrapper')
+        if (!path) return keyboard_wrapper.innerHTML = '';
+
         const tomoElementExtractRegex = /<tomo-element>(?<element>.*)<\/tomo-element>.*?style>(?<style>.*)<\/style>/s;
 
         let res;
@@ -68,7 +71,6 @@ addEventListener('DOMContentLoaded', async () => {
         }
 
         let extractedCode = tomoElementExtractRegex.exec(res)
-        const keyboard_wrapper = document.getElementById('keyboard-wrapper')
         keyboard_wrapper.innerHTML = extractedCode.groups.element + '<style>' + extractedCode.groups.style + '</style>';
 
         const keyboard = document.querySelectorAll('.keyboard button')
@@ -94,7 +96,7 @@ addEventListener('DOMContentLoaded', async () => {
 
 
     // Shortcut Key visible
-    const changeIsRawKeyInput  = (boolen) => isRawKeyInput.set(boolen);
+    const changeIsRawKeyInput = (boolen) => isRawKeyInput.set(boolen);
     let keyInputOptions = [{
         name: "Raw Key",
         icon: `<svg style="rotate:-90deg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out-icon lucide-log-out"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>`,
