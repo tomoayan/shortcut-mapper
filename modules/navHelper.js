@@ -77,7 +77,8 @@ addEventListener('DOMContentLoaded', async () => {
 
         for (const key of keyboardKeys) {
             if (!key.dataset.key) continue;
-            const dataKeyList = (key.dataset.key).split(" ");
+            let dataKeyList = (key.dataset.key).split(" "); // " " unicode 32
+            if (dataKeyList.includes("")) dataKeyList.push(" ");
             for (const dataKey of dataKeyList) {
                 if (Array.isArray(keyDomListRaw[dataKey])) {
                     keyDomListRaw[dataKey].push(key);
@@ -85,7 +86,6 @@ addEventListener('DOMContentLoaded', async () => {
                     keyDomListRaw[dataKey] = [key]
                 }
             }
-
         }
     }
     let keyboardSelectorOptions = []
