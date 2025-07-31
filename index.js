@@ -6,33 +6,33 @@ import "./modules/nav/newSoftwareShortcut.js"
 let isLogin = true
 
 addEventListener('DOMContentLoaded', async () => {
-    
+
     // Event: Keydown
     setTimeout(() => {
         document.addEventListener('keydown', function (event) {
             if (isKeyboardPause.value) return
+
             let key;
-            console.log(isRawKeyInput.value)
-            if (isRawKeyInput.value) key = event.code;
-            if (!isRawKeyInput.value) key = event.key;
             let keyDomList = keyDomListRaw;
             const activeKeyboardKeysTMP = activeKeyboardKeys.value;
+            isRawKeyInput.value ? key = event.code : key = event.key;
 
             try {
                 if (!keyDomList[key]) {
-                    console.error(`"${key}" doesn't exist in virtual keyboard! If you think this is an unexpected behaviour, please report this on github issues`)
+                    console.error(`"${key}" ${isRawKeyInput.value ? "raw key" : "" } doesn't exist in virtual keyboard! If you think this is an unexpected behaviour, please report this on github issues`)
                 }
 
                 if (!activeKeyboardKeysTMP.includes(key)) {
-                    // Key not active, so activate it!
+                    // Key not active? activate it!
                     activeKeyboardKeysTMP.push(key);
                     activeKeyboardKeys.set(activeKeyboardKeysTMP)
                     if (keyDomList[key]) keyDomList[key].classList.add("active");
                 } else {
+                    // Key is active? deactivate it!
                     const keyIndex = activeKeyboardKeysTMP.indexOf(key);
                     activeKeyboardKeysTMP.splice(keyIndex, 1);
                     activeKeyboardKeys.set(activeKeyboardKeysTMP)
-                    if (keyDomList[key]) keyDomList[key].classList.remove("active");
+                    if (keyDomList[key] && keyDomList[key].classList.contains('active')) keyDomList[key].classList.remove("active");
                 }
             } catch (e) {
                 console.error('error on keypress')
