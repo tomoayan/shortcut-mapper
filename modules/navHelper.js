@@ -14,7 +14,7 @@ const secNavActive = (querySelectorPath, options, initFunc) => {
     //     onClick: "function",
     //     fnInput: "string/number/boolen"
     // }]
-    
+
     document.querySelector(querySelectorPath)
         .addEventListener('click', () => {
             const controller = new AbortController();
@@ -72,11 +72,20 @@ addEventListener('DOMContentLoaded', async () => {
         let extractedCode = tomoElementExtractRegex.exec(res)
         keyboard_wrapper.innerHTML = extractedCode.groups.element + '<style>' + extractedCode.groups.style + '</style>';
 
-        const keyboard = document.querySelectorAll('.keyboard button')
-        for (const key in keyDomListRaw) delete keyDomListRaw[key];
-        for (const key of keyboard) {
-            if (key.dataset.keyPrimary) keyDomListRaw[key.dataset.keyPrimary] = key;
-            if (key.dataset.keySecondary) keyDomListRaw[key.dataset.keySecondary] = key;
+        const keyboardKeys = document.querySelectorAll('.keyboard button')
+        for (const key in keyDomListRaw) delete keyDomListRaw[key]; // Delete Previous Saved Keys in Memory
+
+        for (const key of keyboardKeys) {
+            if (!key.dataset.key) continue;
+            const dataKeyList = (key.dataset.key).split(" ");
+            for (const dataKey of dataKeyList) {
+                if (Array.isArray(keyDomListRaw[dataKey])) {
+                    keyDomListRaw[dataKey].push(key);
+                } else {
+                    keyDomListRaw[dataKey] = [key]
+                }
+            }
+
         }
     }
     let keyboardSelectorOptions = []

@@ -15,23 +15,24 @@ addEventListener('DOMContentLoaded', async () => {
             const key = isRawKeyInput.value ? event.code : event.key;
             let keyDomList = keyDomListRaw;
             const activeKeyboardKeysTMP = activeKeyboardKeys.value;
-
+            // console.log(event.code + "   " + event.key)
+            
             try {
                 if (!keyDomList[key]) {
-                    console.error(`"${key}" ${isRawKeyInput.value ? "raw key" : "" } doesn't exist in virtual keyboard! If you think this is an unexpected behaviour, please report this on github issues`)
+                    console.error(`"${key}" ${isRawKeyInput.value ? "raw key" : ""} doesn't exist in virtual keyboard! If you think this is an unexpected behaviour, please report this on github issues`)
                 }
 
                 if (!activeKeyboardKeysTMP.includes(key)) {
                     // Key not active? activate it!
                     activeKeyboardKeysTMP.push(key);
                     activeKeyboardKeys.set(activeKeyboardKeysTMP)
-                    if (keyDomList[key]) keyDomList[key].classList.add("active");
+                    if (keyDomList[key]) for (const keyEl of keyDomList[key]) keyEl.classList.add("active");
                 } else {
                     // Key is active? deactivate it!
                     const keyIndex = activeKeyboardKeysTMP.indexOf(key);
                     activeKeyboardKeysTMP.splice(keyIndex, 1);
                     activeKeyboardKeys.set(activeKeyboardKeysTMP)
-                    if (keyDomList[key] && keyDomList[key].classList.contains('active')) keyDomList[key].classList.remove("active");
+                    if (keyDomList[key]) for (const keyEl of keyDomList[key]) keyEl.classList.remove("active");
                 }
             } catch (e) {
                 console.error('error on keypress')
@@ -86,7 +87,6 @@ const sortActiveShortcutSoftware = () => {
                                         </span>
                                         <span class="total">0</span>
                                     </li>`
-        // console.log(softwareElHtmlString)
         let li = parser.parseFromString(softwareElHtmlString, 'text/html')
         softwareList[1].after(li.body.firstChild)
     }
@@ -143,8 +143,7 @@ const sortActiveShortcutSoftware = () => {
     }
 
     const sortEndTime = performance.now();
-    console.log(document.querySelector('.shortcut-list .info-heading'))
-    document.querySelector('.shortcut-list .info-heading').innerHTML= `Results in ${sortEndTime - sortStartTime}ms ${activeKeyboardKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
+    document.querySelector('.shortcut-list .info-heading').innerHTML = `Results in ${sortEndTime - sortStartTime}ms ${activeKeyboardKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
     console.warn('activeKeyboardKeys ended')
 }
 
