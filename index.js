@@ -144,7 +144,7 @@ const sortActiveShortcutSoftware = () => {
 
     const sortEndTime = performance.now();
     console.log(document.querySelector('.shortcut-list .info-heading'))
-    document.querySelector('.shortcut-list .info-heading').innerHTML= `Results in ${sortEndTime - sortStartTime}ms`
+    document.querySelector('.shortcut-list .info-heading').innerHTML= `Results in ${sortEndTime - sortStartTime}ms ${activeKeyboardKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
     console.warn('activeKeyboardKeys ended')
 }
 
