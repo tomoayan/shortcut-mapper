@@ -12,10 +12,9 @@ addEventListener('DOMContentLoaded', async () => {
         document.addEventListener('keydown', function (event) {
             if (isKeyboardPause.value) return
 
-            let key;
+            const key = isRawKeyInput.value ? event.code : event.key;
             let keyDomList = keyDomListRaw;
             const activeKeyboardKeysTMP = activeKeyboardKeys.value;
-            isRawKeyInput.value ? key = event.code : key = event.key;
 
             try {
                 if (!keyDomList[key]) {

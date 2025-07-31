@@ -1,4 +1,4 @@
-import { isKeyboardPause, shortcutList } from "../data.js";
+import { isKeyboardPause, shortcutList, isRawKeyInput } from "../data.js";
 import * as localStorageManager from "../localStorageManager.js"
 
 let popUpBoxTemplate = document.createElement("template");;
@@ -115,31 +115,44 @@ document.getElementById('addNewShortcut').addEventListener('click', async () => 
 
 
 
-    newPopup.querySelector('.new-shortcut #shortcut').children[0].remove();
     newPopup.querySelector('.new-shortcut #shortcut').addEventListener('focus', (e) => {
         const KeyPresscontroller = new AbortController()
 
         e.target.addEventListener('keydown', (e) => {
             let activeShortcutsOfField = newPopup.querySelector('.new-shortcut #shortcut')
+            const key = isRawKeyInput.value ? e.code : e.key;
             const keyincluded = (key) => {
                 const arrConvert = Array.from(activeShortcutsOfField.children);
                 return arrConvert.some((span) => span.textContent === key)
             }
 
-            if (keyincluded(e.key)) {
+            if (keyincluded(key)) {
                 const arrConvert = Array.from(activeShortcutsOfField.children);
-                const existingKey = arrConvert.find((span) => span.textContent.includes(e.key))
+                const existingKey = arrConvert.find((span) => span.textContent.includes(key))
                 return existingKey.remove()
             }
 
             const span = document.createElement('span');
-            span.textContent = e.key
+            span.textContent = key
             activeShortcutsOfField.appendChild(span)
         }, { signal: KeyPresscontroller.signal });
 
         e.target.addEventListener('blur', () => KeyPresscontroller.abort(), { once: true })
     }, { signal: controller.signal })
 
+
+    const setInputType = (el) => {
+        const rawInputEl = `<svg style="rotate:-90deg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out-icon lucide-log-out"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>\nRaw`
+        const processedInputEl = `<svg style="rotate:-90deg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-in-icon lucide-log-in"><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>\nProcessed`
+        const element = el.currentTarget ? el.currentTarget : el;
+        element.innerHTML = isRawKeyInput.value ? rawInputEl : processedInputEl;
+    }
+    setInputType(newPopup.querySelector('.new-shortcut .input-toggle-btn'))
+    newPopup.querySelector('.new-shortcut .input-toggle-btn').addEventListener('click', (e) => {
+        isRawKeyInput.set(!isRawKeyInput.value)
+        newPopup.querySelector('.new-shortcut #shortcut').innerHTML = '';
+        setInputType(e)
+    }, { signal: controller.signal })
 
 
     const selectSoftwareList = newPopup.querySelector('.software-list');
@@ -194,6 +207,6 @@ document.getElementById('addNewShortcut').addEventListener('click', async () => 
     const clearPopup = () => {
         newPopup.remove();
         controller.abort();
-    isKeyboardPause.set(false)
+        isKeyboardPause.set(false)
     }
 })
