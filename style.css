@@ -346,9 +346,28 @@ nav {
             }
 
             & li.info-heading {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
                 font-size: .8rem;
                 border-bottom: none;
                 padding-bottom: 0;
+
+                & > span {
+                    background-color: hsl(0, 0%, 15%);
+                    padding: .1rem .5rem;
+                    border-radius: .5rem;
+                    position: relative;
+
+                    &:first-child {
+                        margin-left: 1rem;
+                        &::before {
+                            content: '-';
+                            position: absolute;
+                            left: -1rem;
+                        }
+                    }
+                }
             }
 
         }

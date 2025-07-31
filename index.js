@@ -51,6 +51,7 @@ addEventListener('DOMContentLoaded', async () => {
 
 const sortActiveShortcutSoftware = () => {
     console.warn('activeKeyboardKeys started')
+    const sortStartTime = performance.now();
 
     // utils
     let activeKeys = activeKeyboardKeys.value;
@@ -141,6 +142,9 @@ const sortActiveShortcutSoftware = () => {
         shortcutListDOM[0].after(li.body.firstChild)
     }
 
+    const sortEndTime = performance.now();
+    console.log(document.querySelector('.shortcut-list .info-heading'))
+    document.querySelector('.shortcut-list .info-heading').innerHTML= `Results in ${sortEndTime - sortStartTime}ms`
     console.warn('activeKeyboardKeys ended')
 }
 
