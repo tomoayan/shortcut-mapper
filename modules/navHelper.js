@@ -14,6 +14,7 @@ const secNavActive = (querySelectorPath, options, initFunc) => {
     //     onClick: "function",
     //     fnInput: "string/number/boolen"
     // }]
+    
     document.querySelector(querySelectorPath)
         .addEventListener('click', () => {
             const controller = new AbortController();
@@ -22,13 +23,13 @@ const secNavActive = (querySelectorPath, options, initFunc) => {
             ulWrapper.classList.add('changing-activeNavOptions')
             setTimeout(() => ulWrapper.classList.remove('changing-activeNavOptions'), 200);
 
-            let activeNavOptions = document.querySelectorAll("nav > .ul-wrapper > ul.secondary > li");
+            let activeNav = document.querySelector("nav > .ul-wrapper > ul.secondary");
 
             for (const option of options) {
                 const newList = document.createElement("li");
                 newList.innerHTML = option.icon + option.name;
                 newList.addEventListener('click', () => option.onClick(option.fnInput), { signal: controller.signal })
-                activeNavOptions[0].after(newList)
+                activeNav.appendChild(newList)
             }
 
             closeActiveNavOptions.addEventListener('click', () => {
@@ -44,8 +45,6 @@ const secNavActive = (querySelectorPath, options, initFunc) => {
         })
 
     if (initFunc) initFunc.ref(initFunc.value);
-
-
 }
 
 
