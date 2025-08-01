@@ -4,13 +4,14 @@ Shortcut Mapper is a tool that helps you visualize and understand keyboard short
 
 ### Todo
 ###### UX
-- [ ] Add new software
-- [ ] Add new shortcut
-    - before updating, check conflicts
+- [x] Add new software
+- [x] Add new shortcut
+    - [ ] before updating, check conflicts
 - [ ] Live update in shortcut list
 - [ ] Filter shortcuts by software
-- [ ] Edit or Remove shortcuts/software
+- [x] Edit or Remove shortcuts/software
 - [ ] Add folders inside software
+- [ ] Notifications
 
 ###### UIX
 - [ ] Improve Nav (vertical)

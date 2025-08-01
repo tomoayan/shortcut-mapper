@@ -231,7 +231,6 @@ nav {
                 place-content: center space-between;
                 cursor: pointer;
                 transition: background-color .05s;
-
                 padding: .8rem 1rem;
                 font-size: 1rem;
 
@@ -241,11 +240,36 @@ nav {
                     gap: .5rem;
                 }
 
-                & span.total {
-                    background-color: var(--shortcut-nav-background);
-                    padding: .2rem .5rem;
-                    border-radius: .5rem;
-                    font-size: .8rem;
+                & .option-wrapper {
+                    display: flex;
+                    gap: .7rem;
+                    align-items: center;
+
+                    & span.total {
+                        background-color: var(--shortcut-nav-background);
+                        padding: .2rem .5rem;
+                        border-radius: .5rem;
+                        font-size: .8rem;
+                    }
+
+                    & .remove-icon {
+                        display: none;
+                        margin-left: .5rem;
+                        cursor: pointer;
+                        padding: .1rem;
+                        &:hover {
+                            opacity: .8;
+                        }
+
+                        &:active {
+                            opacity: .5;
+                        }
+
+                        & svg {
+                            width: 1rem;
+                            height: 1rem;
+                        }
+                    }
                 }
 
                 & img,
@@ -257,6 +281,10 @@ nav {
 
                 &:hover:not(.add-new) {
                     background-color: var(--nav-border);
+
+                    & .option-wrapper .remove-icon {
+                        display: inline;
+                    }
                 }
             }
 
@@ -335,7 +363,7 @@ nav {
                     & .remove-icon {
                         margin-left: .5rem;
                         cursor: pointer;
-padding: .1rem;
+                        padding: .1rem;
                         &:hover {
                             opacity: .8;
                         }
