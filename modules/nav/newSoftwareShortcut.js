@@ -7,8 +7,9 @@ addEventListener('DOMContentLoaded', async () => {
     const tomoElementExtractRegex = /<tomo-element>(?<element>.*)<\/tomo-element>.*?style>(?<style>.*)<\/style>/s;
 
     let popupCodeRaw;
-    popupCodeRaw = await fetch("/modules/nav/popup.html").then(res => res.text())
     try {
+        const isGithub = window.location.hostname === "tomoayan.github.io" || window.location.hostname === "www.tomoayan.github.io" ? "/shortcut-mapper" : "";
+        popupCodeRaw = await fetch(isGithub + "/modules/nav/popup.html").then(res => res.text())
     } catch (err) {
         console.warn('error while fetching popup code')
     }

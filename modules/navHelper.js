@@ -64,7 +64,8 @@ addEventListener('DOMContentLoaded', async () => {
 
         let res;
         try {
-            res = await fetch(path).then(res => res.text());
+            const isGithub = window.location.hostname === "tomoayan.github.io" || window.location.hostname === "www.tomoayan.github.io" ? "/shortcut-mapper" : "";
+            res = await fetch(isGithub + path).then(res => res.text());
         } catch (err) {
             console.warn('error while fetching keyboard code')
         }
