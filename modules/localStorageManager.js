@@ -103,3 +103,36 @@ export const addShortcut = (data) => {
         }
     })
 }
+
+
+
+
+export const removeShortcut = (softwareName, shortcut) => {
+    return new Promise((resolve, reject) => {
+        try {
+            const haveSoftwareName = isNonEmptyString(softwareName);
+            const haveShortcut = isNonEmptyString(shortcut)
+
+            if (!haveSoftwareName || !haveShortcut) {
+                console.error(`Missing Values:
+                    ${!haveSoftwareName ? "\nsoftwareName" : ""}
+                    ${!haveShortcut ? "\nshortcut" : ""}
+                    `)
+                return reject()
+            }
+
+            const shortcutListTMP = shortcutList.value;
+            const itemIndex = shortcutListTMP.softwares[softwareName].shortcuts.findIndex((item) => item.shortcut === shortcut);
+            // if (true) return reject(), alert("unable find the shortcut index, can't remove");
+            // return
+            if (itemIndex === -1) return reject(), alert("unable find the shortcut index, can't remove");
+            shortcutListTMP.softwares[softwareName].shortcuts.splice(itemIndex, 1)
+            shortcutList.set(shortcutListTMP)
+            updateLocalStorage(shortcutListTMP)
+            resolve()
+        } catch (err) {
+            console.error(err)
+            reject(err)
+        }
+    })
+}

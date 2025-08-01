@@ -332,6 +332,24 @@ nav {
                         border-radius: 1rem;
                     }
 
+                    & .remove-icon {
+                        margin-left: .5rem;
+                        cursor: pointer;
+padding: .1rem;
+                        &:hover {
+                            opacity: .8;
+                        }
+
+                        &:active {
+                            opacity: .5;
+                        }
+
+                        & svg {
+                            width: 1rem;
+                            height: 1rem;
+                        }
+                    }
+
                     & img {
                         width: 1.6rem;
                         height: 1.6rem;
