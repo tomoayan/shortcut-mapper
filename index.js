@@ -178,7 +178,8 @@ const sortActiveShortcutSoftware = () => {
     }, { signal: shortcutDeleteController.signal })
 
     const sortEndTime = performance.now();
-    document.querySelector('.shortcut-list .info-heading').innerHTML = `Results in ${sortEndTime - sortStartTime}ms ${activeKeyboardKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
+    document.querySelector('.shortcut-list .info-heading .results-timing').innerHTML = `Results in ${sortEndTime - sortStartTime}ms`
+    document.querySelector('.shortcut-list .info-heading .active-shortcut-list').innerHTML = `${activeKeyboardKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
     console.warn('activeKeyboardKeys ended')
 }
 
