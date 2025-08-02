@@ -196,8 +196,7 @@ nav {
 
         }
         &:hover {
-            /* opacity: .8; */
-                                color: var(--nav-item-text-color-hover);
+            color: var(--nav-item-text-color-hover);
 
             background-color: hsla(0, 0%, 100%, 0.04);
         }
@@ -431,14 +430,20 @@ nav {
             & li.info-heading {
                 display: flex;
                 flex-direction: row;
-                align-items: center;
+                align-items: end;
                 font-size: .8rem;
-                border-bottom: none;
+                padding-top: 0;
                 padding-bottom: 0;
+                border-bottom: none;
+                height: 2rem;
 
-                & > span {
+                & .results-timing {}
+
+                & .active-shortcut-list > span {
+                    height: 100%;
                     background-color: hsl(0, 0%, 15%);
                     padding: .1rem .5rem;
+                    margin-right: .5rem;
                     border-radius: .5rem;
                     position: relative;
 
