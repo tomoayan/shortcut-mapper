@@ -142,7 +142,8 @@ const sortActiveShortcutSoftware = () => {
 
 
     for (const sCut of activeShortcutList) {
-        const softwareCountEl = document.querySelector(`.content-wrapper > .shortcut-wrapper > ul.software-list > li[data-software="${sCut.software}"] > span.total`);
+        const softwareCountEl = document.querySelector(`.content-wrapper > .shortcut-wrapper > ul.software-list > li[data-software="${sCut.software}"] span.total`);
+        console.log(softwareCountEl)
         if (softwareCountEl) softwareCountEl.innerText = Number(softwareCountEl.innerText) + 1
 
 
