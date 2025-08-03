@@ -175,7 +175,7 @@ nav {
     }
 
     & .version {
-        z-index: 999;
+        z-index: 1;
         margin: auto 0 1.6rem 0;
         padding: .7rem 0;
 
@@ -369,6 +369,13 @@ nav {
 
         & > ul.shortcut-list {
             background-color: var(--shortcut-list-bg);
+            overflow-y: auto;
+            scrollbar-width: none;
+            position: relative;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
 
             & li {
                 display: flex;
@@ -436,6 +443,9 @@ nav {
                 padding-bottom: 0;
                 border-bottom: none;
                 height: 2rem;
+                position: sticky;
+                top: 0;
+                background-color: var(--shortcut-list-bg);
 
                 & .results-timing {}
 
