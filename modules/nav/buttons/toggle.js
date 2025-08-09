@@ -1,6 +1,6 @@
 export default (displayName, callbackFn, AbortControllerSignal) => {
     const toggleBTN = ```
-            <label class="navButton toggle">
+            <label class="navOption toggle">
                 <input type="checkbox">
                 <div class="toggle">
                 </div>

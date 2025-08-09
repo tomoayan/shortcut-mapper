@@ -1,7 +1,7 @@
 export default (displayName, callbackFn, AbortControllerSignal) => {
 
     const slider = ```
-                <div class="slider-container">
+                <div class="navOption slider-container">
                     <div class="track"></div>
                     <div class="thumb">
                         <div class="tooltip">50</div>

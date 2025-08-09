@@ -1,5 +1,5 @@
 /* TOGGLE BUTTON */
-.navButton.toggle {
+.navOption.toggle {
     --animation: .3s cubic-bezier(0.645, 0.045, 0.355, 1.0);
 
     font-size: 1rem;
@@ -44,7 +44,7 @@
 
 
 /* SLIDER */
-.slider-container {
+.navOption.slider-container {
     position: relative;
     width: 100%;
 
@@ -132,4 +132,59 @@
         opacity: 1;
     }
 
+}
+
+
+
+
+
+
+
+
+
+/* Radio */
+.navOption.radio-container {
+    --main-color: hsl(51, 89%, 71%);
+    --main-color-opacity: hsla(51, 89%, 71%, 0.15);
+    --total-radio: 1;
+    --selected-input-num: 0;
+
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    isolation: isolate;
+
+    & input {
+        cursor: pointer;
+        appearance: none;
+    }
+
+    & label {
+        cursor: pointer;
+        padding: 1rem;
+        position: relative;
+        color: grey;
+        transition: all 0.4s ease-out;
+        z-index: 2;
+        user-select: none;
+    }
+
+    & input:checked + label {
+        color: var(--main-color);
+        pointer-events: none;
+    }
+
+    & .active-background {
+        position: absolute;
+        inset: 0;
+        bottom: auto;
+        background-color: var(--main-color-opacity);
+        height: calc(100% / var(--total-radio));
+        z-index: 1;
+        transition: transform .4s cubic-bezier(0.19, 1.0, 0.22, 1.0);
+    }
+
+    & .active-background {
+        transform: translateY(calc(100% * var(--selected-input-num)));
+    }
 }
