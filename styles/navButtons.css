@@ -1,0 +1,41 @@
+/* TOGGLE BUTTON */
+.navButton.toggle {
+    --animation: .3s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+
+    font-size: 1rem;
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+    height: 1.5em;
+    width: 4em;
+    border-radius: 15px;
+    background-color: #394a56;
+    transition: background-color var(--animation);
+
+    &:has(input:checked) {
+        background-color: rgb(41, 135, 218);
+    }
+
+    & input {
+        display: none;
+    }
+
+    & .toggle {
+        height: 2em;
+        width: 2em;
+        border-radius: 50%;
+        background: #fff;
+        transform: translateX(-70%);
+        transition: transform var(--animation), scale var(--animation);
+    }
+
+    & input:checked ~ .toggle {
+        transform: translateX(70%);
+    }
+
+    &:active .toggle {
+        scale: .85;
+        transition-timing-function: ease-out;
+    }
+}
+
