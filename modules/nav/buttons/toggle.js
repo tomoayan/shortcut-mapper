@@ -8,6 +8,6 @@ export default (displayName, callbackFn, AbortControllerSignal) => {
     ```
     const newList = document.createElement("li");
     newList.innerHTML = displayName + toggleBTN;
-    newList.addEventListener('click', () => option.onClick(callbackFn), { signal: AbortControllerSignal });
+    newList.addEventListener('click', () => callbackFn, { signal: AbortControllerSignal });
     return newList;
 }
