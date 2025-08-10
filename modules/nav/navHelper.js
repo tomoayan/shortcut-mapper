@@ -1,4 +1,4 @@
-import { keyDomListRaw, isRawKeyInput } from "./data.js"
+import { keyDomListRaw, isRawKeyInput } from "../data.js"
 
 
 
