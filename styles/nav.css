@@ -1,6 +1,7 @@
 nav {
     width: 20%;
     height: 100%;
+    min-width: 210px;
     border-radius: 1rem;
 
 
@@ -16,7 +17,7 @@ nav {
         background-color: #3e3e3e;
         border-radius: .4rem;
         aspect-ratio: 5/2;
-position: relative;
+        position: relative;
 
         & .branding-wrapper {
             position: absolute;
@@ -29,8 +30,8 @@ position: relative;
                 font-size: 1rem;
                 text-align: end;
                 position: relative;
-                
-                
+
+
                 & span {
                     font-weight: 400;
                     position: absolute;
@@ -148,11 +149,19 @@ position: relative;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: .5rem;
                 width: 100%;
-                font-size: .8rem;
+                gap: .5rem;
                 color: inherit;
                 user-select: none;
+                
+                & p {
+                    font-size: .8rem;
+
+                    & span {
+                        display: inline-block;
+                    }
+                }
+
 
                 &:hover {
                     text-decoration: none;
