@@ -1,4 +1,4 @@
-import { isRawKeyInput } from "../../data.js"
+import { keyboardIsRawKeyInput } from "../../data.js"
 
 export const inputHelper = (event) => {
     const value = event.currentTarget.value;
@@ -7,5 +7,5 @@ export const inputHelper = (event) => {
     // just for safety
     if (value !== 'raw' && value !== 'processed') throw new Error("key Input type is neither of both 'raw' or 'processed'");
 
-    isRawKeyInput.set(isRaw);
+    keyboardIsRawKeyInput.set(isRaw);
 }

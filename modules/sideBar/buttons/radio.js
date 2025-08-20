@@ -1,4 +1,4 @@
-export const radioBTN =  (options, callbackFn, AbortControllerSignal) => {
+export const radioBTN = (options, callbackFn, AbortControllerSignal, currValueReactor) => {
     const radioUniqueId = crypto.randomUUID();
     const radioDivWrapper = document.createElement('div');
     radioDivWrapper.classList.add('navOption', 'radio-container')
@@ -11,6 +11,9 @@ export const radioBTN =  (options, callbackFn, AbortControllerSignal) => {
                                 <label for="${radioUniqueId + "-" + item.value}">${item.name}</label>
                                 `
         radioDivWrapper.innerHTML += optionHTMLCode;
+    }
+    if (currValueReactor) {
+        radioDivWrapper.querySelector(`input[value="${currValueReactor.value}"`).checked = true;
     }
 
     radioDivWrapper.querySelectorAll('input').forEach(e => e.addEventListener('change', callbackFn, { signal: AbortControllerSignal }))

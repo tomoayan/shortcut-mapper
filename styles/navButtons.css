@@ -1,3 +1,7 @@
+.navOption {
+    margin-left: .3rem;
+}
+
 /* TOGGLE BUTTON */
 .navOption.toggle {
     --animation: .3s cubic-bezier(0.645, 0.045, 0.355, 1.0);
@@ -9,6 +13,7 @@
     width: 100%;
     cursor: pointer;
     transition: color .2s linear;
+user-select: none;
 
     &:hover {
         color: #fff;
@@ -64,6 +69,7 @@
     flex-direction: column;
     gap: .2rem;
     --thumb-size: 1.25rem;
+    user-select: none;
 
     & .slider {
         isolation: isolate;

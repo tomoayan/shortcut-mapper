@@ -4,7 +4,17 @@ export const shortcutList = new Reactor({
     lastModification: 0,
     softwares: {}
 })
-export const activeKeyboardKeys = new Reactor([])
-export const isKeyboardPause = new Reactor(false)
-export const isRawKeyInput = new Reactor(true)
-export const keyDomListRaw = {}
+
+
+
+// Keyboard Options
+export const keyboardActiveKeys = new Reactor([])
+export const keyboardIsPause = new Reactor(false)
+export const keyboardIsRawKeyInput = new Reactor("raw")
+export const keyboardKeyDomListRaw = {}
+export const keyboardCurrVirtualName = new Reactor("generic")
+
+
+export const tmp = {
+    oldAbortControllerSingal: null
+}
