@@ -32,6 +32,8 @@ body {
     flex: 1 0 0;
     width: 100vw;
     height: 100vh;
+    padding: 1.5rem;
+    gap: 1.5rem;
     color: var(--root-font-color);
 }
 
@@ -54,7 +56,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    padding: 1.5rem;
     flex: 1 1 0;
 
 
