@@ -16,7 +16,7 @@ Shortcut Mapper is a tool that helps you visualize and understand keyboard short
 ###### UIX
 - [ ] Improve Nav (vertical)
 - [ ] Show shortcut name in keyboard keys (or on hover)
-
+- [ ] Make a script/style loading manager/handler
 
 ###### Backup
 - [ ] GDrive Login

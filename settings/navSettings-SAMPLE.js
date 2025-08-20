@@ -1,7 +1,7 @@
 export const activeNavOptionsSAMPLE = {
     heading: "",
     description: "",
-    section: [
+    sections: [
         {
             subHeading: "",
             tooltip: "",
@@ -10,13 +10,11 @@ export const activeNavOptionsSAMPLE = {
                     type: 'toggle',
                     name: "",
                     callback: `callback fn ref`,
-                    abortSignal: `AbortControllerSignal ref`
                 },
                 {
                     type: 'slider',
                     name: "",
                     callback: `callback fn ref`,
-                    abortSignal: `AbortControllerSignal ref`
                 },
                 {
                     type: 'select',
@@ -27,7 +25,6 @@ export const activeNavOptionsSAMPLE = {
                         }
                     ],
                     callback: `callback fn ref`,
-                    abortSignal: `AbortControllerSignal ref`
                 },
             ]
         }

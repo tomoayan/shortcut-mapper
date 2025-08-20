@@ -1,90 +1,61 @@
-export default (displayName, callbackFn, AbortControllerSignal) => {
+export const sliderEl = (displayName, callbackFn, AbortControllerSignal) => {
 
-    const slider = ```
-                <div class="navOption slider-container">
-                    <div class="track"></div>
-                    <div class="thumb">
-                        <div class="tooltip">50</div>
-                    </div>
-                    <input type="range" min="0" max="100" value="50">
-                </div>
-    ```
 
-    const newList = document.createElement("li");
-    newList.innerHTML = displayName + slider;
+    const newSlider = document.createElement('div');
+    newSlider.classList.add('navOption', 'slider-container')
+    newSlider.innerHTML = `
+                        ${displayName}
+                        <div class="slider">
+                            <div class="track"></div>
+                            <div class="thumb-track">
+                                <div class="thumb">
+                                    <div class="tooltip">50</div>
+                                </div>
+                            </div>
+                            <input type="range" min="0" max="100" value="50">
+                        </div>
+                                `
 
-    const sliderEl = newList.querySelector('input[type="range"]');
-    const tooltipEl = newList.querySelector('.tooltip');
+    const inputEl = newSlider.querySelector('input');
+    const thumb = newSlider.querySelector('.thumb');
+    const tooltipEl = newSlider.querySelector('.tooltip');
     let currentX = 0;
     let targetX = 0;
+    let isAnimating = false;
 
-    
-    function updateTarget() {
-        const percent = (sliderEl.value - sliderEl.min) / (sliderEl.max - sliderEl.min);
-        targetX = percent * sliderEl.offsetWidth;
-        tooltipEl.textContent = sliderEl.value;
+    function roundTo(num) {
+        const factor = 10 ** 3;
+        return Math.round(num * factor) / factor;
     }
-    
+
+    function updateTarget() {
+        const percent = (inputEl.value - inputEl.min) / (inputEl.max - inputEl.min);
+        targetX = percent * inputEl.offsetWidth;
+        tooltipEl.textContent = inputEl.value;
+        if (!isAnimating) animate();
+    }
+
     function animate() {
-        // TODO: Stop animation when finished
+        if (!isAnimating) isAnimating = true;
+
+        // stop if close enough
+        if (roundTo(targetX) === roundTo(currentX)) {
+            isAnimating = false
+            return
+        };
+
         currentX += (targetX - currentX) * 0.1; // smoothing
-        console.log(currentX)
-        thumb.style.left = `${currentX}px`;
+        thumb.style.left = `${(currentX / inputEl.offsetWidth) * 100}%`;
         requestAnimationFrame(animate);
     }
-    
-    sliderEl.addEventListener('input', updateTarget);
+
+    inputEl.addEventListener('input', (ev) => {
+        callbackFn(ev)
+        updateTarget()
+    }, { signal: AbortControllerSignal });
+
     updateTarget();
     animate();
-    
-    
-    
-    sliderEl.addEventListener('input', () => callbackFn, { signal: AbortControllerSignal });
-    return newList;
+
+    return newSlider;
 }
-
-
-
-
-
-
-
-
-
-
-//         <div class="slider-container">
-//             <div class="track"></div>
-//             <div class="thumb">
-//                 <div class="tooltip">50</div>
-//             </div>
-//             <input type="range" min="0" max="100" value="50">
-//         </div>
-
-
-
-
-//         <script>
-//             const slider = document.querySelector('input[type="range"]');
-//             const thumb = document.querySelector('.thumb');
-//             const tooltip = document.querySelector('.tooltip');
-//             let currentX = 0;
-//             let targetX = 0;
-
-//             function updateTarget() {
-//                 const percent = (slider.value - slider.min) / (slider.max - slider.min);
-//                 targetX = percent * slider.offsetWidth;
-//                 tooltip.textContent = slider.value;
-//             }
-
-//             function animate() {
-//                 // TODO: Stop animation when finished
-//                 currentX += (targetX - currentX) * 0.1; // smoothing
-//                 console.log(currentX)
-//                 thumb.style.left = `${currentX}px`;
-//                 requestAnimationFrame(animate);
-//             }
-
-//             slider.addEventListener('input', updateTarget);
-//             updateTarget();
-//             animate();
-//         </script>
