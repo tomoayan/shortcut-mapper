@@ -13,17 +13,35 @@ nav {
     position: relative;
 
     div.branding {
-        display: flex;
-        padding: 1.5rem .5rem;
         background-color: #3e3e3e;
         border-radius: .4rem;
-        justify-content: center;
-        align-items: center;
-        aspect-ratio: 4/1;
+        aspect-ratio: 5/2;
+position: relative;
 
-        & p {
-            font-size: small;
+        & .branding-wrapper {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-content: center;
+
+            & p {
+                font-weight: 600;
+                font-size: 1rem;
+                text-align: end;
+                position: relative;
+                
+                
+                & span {
+                    font-weight: 400;
+                    position: absolute;
+                    right: 0;
+                    bottom: -.9rem;
+                    font-size: .6rem;
+                    opacity: .9;
+                }
+            }
         }
+
     }
 
     & .ul-wrapper {
@@ -121,31 +139,30 @@ nav {
     }
 
 
-    & .version {
-        z-index: 1;
-        margin: auto 0 1.6rem 0;
-        padding: .7rem 0;
+    & ul.footer {
+        list-style: none;
 
-        & a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: .5rem;
-            width: 100%;
-            font-size: .7rem;
-            text-align: center;
-            color: inherit;
-            user-select: none;
+        li {
 
-            &:hover {
-                text-decoration: none;
+            & a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: .5rem;
+                width: 100%;
+                font-size: .8rem;
+                color: inherit;
+                user-select: none;
+
+                &:hover {
+                    text-decoration: none;
+                }
+
             }
-
         }
         &:hover {
             color: var(--nav-item-text-color-hover);
-
-            background-color: hsla(0, 0%, 100%, 0.04);
+            /* background-color: hsla(0, 0%, 100%, 0.04); */
         }
 
         &:active {
