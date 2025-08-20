@@ -61,6 +61,10 @@ body {
     & > #keyboard-wrapper {
         display: flex;
         justify-content: center;
+    
+    &:not(:has(> div)) {
+        display: none;
+    }
     }
 
 
