@@ -131,6 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 setTimeout(() => {
         document.querySelector("nav > .ul-wrapper > .nav-links > ul > li:not(.disabled)").click();
-}, 1000);
+}, 0);
     
 })
