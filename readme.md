@@ -13,14 +13,9 @@ Shortcut Mapper is a tool that helps you visualize and understand keyboard short
 - [ ] Add folders inside software
 - [ ] Notifications
 
-###### UIX
-- [ ] Improve Nav **(Deadline: Aug 20)**
-    - [ ] Show Activated Option
-    - [ ] Add Check, Slider, Radio Options
-    - [ ] Description in Active Nav
-    - [ ] Sub-heading for separating option
-    - [ ] Release Notes
-    - [ ] Better Github Link
+###### UI
+- [ ] Better Github Link Section
+- [ ] Release Notes
 - [ ] Show shortcut name in keyboard keys (or on hover)
 - [ ] Make a script/style loading manager/handler
 
