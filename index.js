@@ -1,6 +1,6 @@
-import { shortcutList, activeKeyboardKeys, isKeyboardPause, keyDomListRaw, isRawKeyInput } from "./modules/data.js"
+import { shortcutList, keyboardActiveKeys, keyboardIsPause, keyboardKeyDomListRaw, keyboardIsRawKeyInput } from "./modules/data.js"
 import * as localStorageData from "./modules/localStorageManager.js"
-import "./modules/nav/newSoftwareShortcut.js"
+import "./modules/sideBar/newSoftwareShortcut.js"
 // import * as gdrive from "./drive.js";
 
 let isLogin = true
@@ -10,28 +10,28 @@ addEventListener('DOMContentLoaded', async () => {
     // Event: Keydown
     setTimeout(() => {
         document.addEventListener('keydown', function (event) {
-            if (isKeyboardPause.value) return
+            if (keyboardIsPause.value) return
 
-            const key = isRawKeyInput.value ? event.code : event.key;
-            let keyDomList = keyDomListRaw;
-            const activeKeyboardKeysTMP = activeKeyboardKeys.value;
+            const key = keyboardIsRawKeyInput.value ? event.code : event.key;
+            let keyDomList = keyboardKeyDomListRaw;
+            const activeKeyboardKeysTMP = keyboardActiveKeys.value;
             // console.log(event.code + "   " + event.key)
 
             try {
                 if (!keyDomList[key]) {
-                    console.error(`"${key}" ${isRawKeyInput.value ? "raw key" : ""} doesn't exist in virtual keyboard! If you think this is an unexpected behaviour, please report this on github issues`)
+                    console.error(`"${key}" ${keyboardIsRawKeyInput.value ? "raw key" : ""} doesn't exist in virtual keyboard! If you think this is an unexpected behaviour, please report this on github issues`)
                 }
 
                 if (!activeKeyboardKeysTMP.includes(key)) {
                     // Key not active? activate it!
                     activeKeyboardKeysTMP.push(key);
-                    activeKeyboardKeys.set(activeKeyboardKeysTMP)
+                    keyboardActiveKeys.set(activeKeyboardKeysTMP)
                     if (keyDomList[key]) for (const keyEl of keyDomList[key]) keyEl.classList.add("active");
                 } else {
                     // Key is active? deactivate it!
                     const keyIndex = activeKeyboardKeysTMP.indexOf(key);
                     activeKeyboardKeysTMP.splice(keyIndex, 1);
-                    activeKeyboardKeys.set(activeKeyboardKeysTMP)
+                    keyboardActiveKeys.set(activeKeyboardKeysTMP)
                     if (keyDomList[key]) for (const keyEl of keyDomList[key]) keyEl.classList.remove("active");
                 }
             } catch (e) {
@@ -57,7 +57,7 @@ const sortActiveShortcutSoftware = () => {
     shortcutDeleteController.abort() // remove previous events
 
     // utils
-    let activeKeys = activeKeyboardKeys.value;
+    let activeKeys = keyboardActiveKeys.value;
     let activeShortcutList = [];
     let parser = new DOMParser();
     const isAvtiveShortcutMatched = (arr1, arr2) => {
@@ -152,7 +152,7 @@ const sortActiveShortcutSoftware = () => {
                                     <img src="${sCut.icon}" alt="${sCut.software}" title="${sCut.software}">
                                     <div class="title">
                                         <strong>${sCut.usecase}</strong>
-                                        <span class="item-count">${sCut.shortcut.replace('⌨', ' + ')}</span>
+                                        <span class="item-count">${sCut.shortcut.replaceAll('⌨', ' + ')}</span>
                                         </div>
                                         <span class="remove-icon" title="tmp remove shortcut icon" data-shortcut="${sCut.shortcut}" data-software-name="${sCut.software}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -179,10 +179,10 @@ const sortActiveShortcutSoftware = () => {
 
     const sortEndTime = performance.now();
     document.querySelector('.shortcut-list .info-heading .results-timing').innerHTML = `Results in ${sortEndTime - sortStartTime}ms`
-    document.querySelector('.shortcut-list .info-heading .active-shortcut-list').innerHTML = `${activeKeyboardKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
+    document.querySelector('.shortcut-list .info-heading .active-shortcut-list').innerHTML = `${keyboardActiveKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
     console.warn('activeKeyboardKeys ended')
 }
 
 
-activeKeyboardKeys.subscribe(sortActiveShortcutSoftware)
+keyboardActiveKeys.subscribe(sortActiveShortcutSoftware)
 shortcutList.subscribe(sortActiveShortcutSoftware)

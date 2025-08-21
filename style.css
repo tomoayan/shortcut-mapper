@@ -10,8 +10,10 @@
     --nav-background: hsl(0, 0%, 9%);
     --nav-border: hsl(0, 0%, 14%);
     --nav-item-text-color-hover: hsl(0, 0%, 100%);
-    --nav-collapse-width: 100px;
-    --nav-expand-width: 250px;
+
+    /* Nav Width */
+    --nav-collapsed-width: 100px;
+    --nav-expanded-width: 250px;
 
     --shortcut-nav-background: hsl(0, 0%, 7%);
 
@@ -30,187 +32,15 @@ body {
     flex: 1 0 0;
     width: 100vw;
     height: 100vh;
+    padding: 1.5rem;
+    gap: 1.5rem;
     color: var(--root-font-color);
 }
 
-nav {
-    width: var(--nav-collapse-width);
-    min-width: var(--nav-collapse-width);
-    max-width: var(--nav-expand-width);
-    height: 100%;
-    transition: .2s ease;
-    transition-property: width;
-
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    background-color: var(--nav-background);
-    border-right: 2px solid var(--nav-border);
-    position: relative;
-    overflow: hidden;
-
-    div.branding {
-        display: flex;
-        padding: 1.5rem .5rem;
-        margin-bottom: 3rem;
-
-        & h1 {
-            text-align: right;
-            font-size: 1rem;
-            width: auto;
-            display: inline-block;
-            color: var(--logo-white);
-            transition: .2s ease;
-            transition-property: width, font-size, padding-left;
-
-            & span {
-                color: var(--logo-yellow);
-                margin-left: auto;
-            }
-        }
-    }
-
-    & .ul-wrapper {
-        position: absolute;
-        top: 10rem;
-        width: 100%;
-        height: 100%;
-
-        & ul.primary {
-            position: absolute;
-            inset: 0;
-            width: var(--nav-collapse-width);
-            transition: left .2s;
-
-            & li {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: .3rem;
-                padding: 1rem 1.3rem;
-                cursor: pointer;
-                user-select: none;
-                font-size: .7rem;
-                text-align: center;
-                transition: opacity .5s, background-color .2s;
-                transition: .2s ease;
-                transition-property: width, flex-direction;
-
-                &.disabled {
-                    opacity: .6;
-                    cursor: default;
-                }
-
-                &:hover:not(.disabled) {
-                    color: var(--nav-item-text-color-hover);
-                    background-color: hsla(0, 0%, 100%, 0.04);
-                }
-
-                & svg {
-                    width: 1.5rem;
-                    height: 1.5rem;
-                }
-            }
-        }
-
-
-        & ul.secondary {
-            position: absolute;
-            inset: 0 0 0 calc(var(--nav-expand-width) - var(--nav-expand-width) * 2);
-            width: var(--nav-expand-width);
-            transition: left .2s;
-
-            & li {
-                padding: .8rem 1.3rem;
-                font-size: .7rem;
-                display: flex;
-                gap: .6rem;
-                align-items: center;
-                cursor: pointer;
-
-                &:hover {
-                    color: var(--nav-item-text-color-hover);
-                    background-color: hsla(0, 0%, 100%, 0.04);
-                }
-
-                & svg {
-                    width: 1.3rem;
-                    height: 1.3rem;
-                }
-
-
-                &.nav {
-                    gap: .3rem;
-                    font-size: .7rem;
-                }
-            }
-        }
-
-        &#secActive {
-            & ul.primary {
-                left: 100%;
-            }
-
-            & ul.secondary {
-                left: 0;
-            }
-        }
-
-        &:has(.changing-activeNavOptions) ul li {
-            pointer-events: none;
-        }
-    }
 
 
 
-    &:has(.ul-wrapper#secActive) {
-        width: var(--nav-expand-width);
 
-        & .branding {
-            & h1 {
-                padding-left: 1rem;
-                font-size: 1.3rem !important;
-            }
-        }
-    }
-
-    & .version {
-        z-index: 1;
-        margin: auto 0 1.6rem 0;
-        padding: .7rem 0;
-
-        & a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: .5rem;
-            width: 100%;
-            font-size: .7rem;
-            text-align: center;
-            color: inherit;
-            user-select: none;
-
-            &:hover {
-                text-decoration: none;
-            }
-
-        }
-        &:hover {
-            color: var(--nav-item-text-color-hover);
-
-            background-color: hsla(0, 0%, 100%, 0.04);
-        }
-
-        &:active {
-            opacity: .5;
-        }
-
-        & svg {
-            width: 2rem;
-            height: 2rem;
-        }
-    }
-}
 
 
 
@@ -226,13 +56,16 @@ nav {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    padding: 1.5rem;
     flex: 1 1 0;
 
 
     & > #keyboard-wrapper {
         display: flex;
         justify-content: center;
+    
+    &:not(:has(> div)) {
+        display: none;
+    }
     }
 
 
