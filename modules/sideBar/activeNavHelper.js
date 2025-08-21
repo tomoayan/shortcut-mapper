@@ -27,13 +27,9 @@ export const activeNavHelper = (data, elCurrTarget) => {
     setTimeout(async () => {
         secNavList.innerHTML = "";
         secNavList.append(...(await compileNewOptions()))
-        secNavList.style.transitionTimingFunction = 'cubic-bezier(0, 0.55, 0.45, 1)'
         secNavList.style.opacity = '1'
         secNavList.style.pointerEvents = 'auto'
-        setTimeout(() => {
-            secNavList.style.removeProperty("transition-timing-function")
-        }, 250)
-    }, 250);
+    }, 200);
 
 
 

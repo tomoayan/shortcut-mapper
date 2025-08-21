@@ -60,23 +60,21 @@ nav {
                     display: flex;
                     align-items: center;
                     gap: .3rem;
-                    padding: .5rem .6rem;
+                    padding: .5rem .5rem;
+                    border-radius: .4rem;
                     cursor: pointer;
                     user-select: none;
                     font-size: .7rem;
+                    color: hsl(0, 0%, 40%);
+                    transition: color .2s ease;
 
                     &.disabled {
-                        opacity: .6;
-                        cursor: default;
+                        cursor: not-allowed;
                     }
 
                     &.active {
+                        color: var(--root-font-color);
                         pointer-events: none;
-                    }
-
-                    &:hover:not(.disabled) {
-                        color: var(--nav-item-text-color-hover);
-                        background-color: hsla(0, 0%, 100%, 0.04);
                     }
 
                     & svg {
@@ -92,7 +90,8 @@ nav {
             display: flex;
             flex-direction: column;
             gap: 3rem;
-            transition: opacity 250ms cubic-bezier(0.55, 0, 1, 0.45);
+            transition: opacity .2s cubic-bezier(0.55, 0, 1, 0.45);
+            transition: opacity .2s ease-in-out;
 
             & .nav-head {
                 padding: 0 1rem 1rem;
@@ -153,34 +152,23 @@ nav {
                 gap: .5rem;
                 color: inherit;
                 user-select: none;
+                color: hsl(0, 0%, 80%);
                 
                 & p {
+                    font-weight: 500;
                     font-size: .8rem;
-
-                    & span {
-                        display: inline-block;
-                    }
+                    letter-spacing: .02cap;
                 }
 
+                & svg {
+                    width: 1.4rem;
+                    height: 1.4rem;
+                }
 
                 &:hover {
                     text-decoration: none;
                 }
-
             }
-        }
-        &:hover {
-            color: var(--nav-item-text-color-hover);
-            /* background-color: hsla(0, 0%, 100%, 0.04); */
-        }
-
-        &:active {
-            opacity: .5;
-        }
-
-        & svg {
-            width: 2rem;
-            height: 2rem;
         }
     }
 }
