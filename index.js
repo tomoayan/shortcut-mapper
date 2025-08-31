@@ -44,6 +44,17 @@ addEventListener('DOMContentLoaded', async () => {
     }, 500);
 
     await localStorageData.init();
+
+
+    const explorerQuickOptionListEl = document.querySelectorAll('.shortcut-explorer-wrapper > .explorer > .nav .main-content > .quick-options > label')
+explorerQuickOptionListEl.forEach((el) => {
+    el.addEventListener('click', (event) =>{
+        event.currentTarget.classList.toggle('active');
+    })
+
+    // el.dataset.maxWidth = ;
+    el.style.setProperty('--max-width-value', el.querySelector('span').offsetWidth + 'px');
+})
 })
 
 
@@ -242,8 +253,8 @@ const sortActiveShortcutSoftware = () => {
     }, { signal: shortcutDeleteController.signal })
 
     const sortEndTime = performance.now();
-    document.querySelector('.content-wrapper > .shortcut-explorer-wrapper > .explorer > .nav > .info-heading .results-timing').innerHTML = `Results in ${sortEndTime - sortStartTime}ms`
-    document.querySelector('.content-wrapper > .shortcut-explorer-wrapper > .explorer > .nav .active-shortcut-list').innerHTML = `${keyboardActiveKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
+    document.querySelector('.content-wrapper > .shortcut-explorer-wrapper > .explorer > .nav > .main-content > .info-heading > .results-timing').innerHTML = `Results in ${sortEndTime - sortStartTime}ms`
+    document.querySelector('.content-wrapper > .shortcut-explorer-wrapper > .explorer > .nav > .main-content > .info-heading > .active-shortcut-list').innerHTML = `${keyboardActiveKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
     // console.warn('activeKeyboardKeys ended')
 }
 
