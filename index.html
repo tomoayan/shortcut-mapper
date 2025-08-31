@@ -97,7 +97,7 @@
                             <span class="active-shortcut-list"></span>
                         </li>
                         <li class="quick-options">
-                            <label>
+                            <label id="shortcutQuickOptionToggleSearch">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round" class="lucide lucide-search-icon lucide-search">
@@ -142,6 +142,44 @@
                                 </span>
                             </label>
                         </li>
+                    </div>
+                    <div class="search-wrapper">
+                        <ul class="search">
+                            <li class="field">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-search-icon lucide-search">
+                                    <path d="m21 21-4.34-4.34" />
+                                    <circle cx="11" cy="11" r="8" />
+                                </svg>
+                                <input type="text" placeholder="Type your passcode, i mean shortcut here...">
+                            </li>
+                            <li class="options-wrapper">
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="lucide lucide-case-sensitive-icon lucide-case-sensitive">
+                                        <path d="m2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16" />
+                                        <path d="M22 9v7" />
+                                        <path d="M3.304 13h6.392" />
+                                        <circle cx="18.5" cy="12.5" r="3.5" />
+                                    </svg>
+                                </span>
+                                <span id="searchFilterIncludeDescription">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="lucide lucide-text-initial-icon lucide-text-initial">
+                                        <path d="M15 5h6" />
+                                        <path d="M15 12h6" />
+                                        <path d="M3 19h18" />
+                                        <path d="m3 12 3.553-7.724a.5.5 0 0 1 .894 0L11 12" />
+                                        <path d="M3.92 10h6.16" />
+                                    </svg>
+                                </span>
+                            </li>
+                        </ul>
                     </div>
                 </ul>
                 <ul id="shortcut-list" class="shortcut-list">

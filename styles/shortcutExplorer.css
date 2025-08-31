@@ -220,6 +220,100 @@
 
                 }
             }
+
+            .search-wrapper {
+                height: 0;
+                overflow: hidden;
+                transition: height .2s ease;
+                padding: 0 1rem;
+                display: flex;
+                align-items: center;
+
+                &.active {
+                    height: 4rem;
+                }
+
+                & ul.search {
+                    width: 100%;
+                    height: 2.5rem;
+                    display: flex;
+                    gap: .5rem;
+                    list-style: none;
+                    background-color: hsla(0, 0%, 100%, 0.05);
+                    border-radius: 1rem;
+                    padding: 0 1rem;
+
+                    & li {
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    & li.field {
+                        flex-grow: 1;
+                        display: flex;
+                        gap: .5rem;
+
+                        & svg {
+                            width: 1.2rem;
+                            height: 1.2rem;
+                        }
+
+                        & input {
+                            width: 100%;
+                            height: 100%;
+                            outline: 0;
+                            border: 0;
+                            background-color: transparent;
+                            font-size: .8rem;
+                            font-family: Verdana, Arial, sans-serif;
+                        }
+                    }
+
+                    & .options-wrapper {
+                        display: flex;
+                        gap: .5rem;
+
+                        & span {
+                            display: grid;
+                            place-content: center;
+                            padding: .3rem;
+                            cursor: pointer;
+                            position: relative;
+                            isolation: isolate;
+
+                            &::before {
+                                position: absolute;
+                                inset: 0;
+                                content: '';
+                                background-color: transparent;
+                                z-index: 0;
+                                border-radius: .5rem;
+                                scale: 0;
+                                transition: .2s ease;
+                                transition-property: scale, background-color;
+                            }
+
+                            & svg {
+                                position: relative;
+                                width: 1.05rem;
+                                height: 1.05rem;
+                                z-index: 1;
+                                transition: scale .2s ease;
+                            }
+
+                            &.active::before {
+                                scale: 1;
+                                background-color: hsla(0, 0%, 100%, 0.2);
+                            }
+
+                            &:active svg {
+                                scale: .9;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         & > ul.shortcut-list {

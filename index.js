@@ -46,15 +46,39 @@ addEventListener('DOMContentLoaded', async () => {
     await localStorageData.init();
 
 
-    const explorerQuickOptionListEl = document.querySelectorAll('.shortcut-explorer-wrapper > .explorer > .nav .main-content > .quick-options > label')
-explorerQuickOptionListEl.forEach((el) => {
-    el.addEventListener('click', (event) =>{
-        event.currentTarget.classList.toggle('active');
+    const explorerQuickOptionListEl = document.querySelectorAll('.shortcut-explorer-wrapper > .explorer > .nav > .main-content > .quick-options > label')
+    explorerQuickOptionListEl.forEach((el) => {
+        el.addEventListener('click', (event) => {
+            event.currentTarget.classList.toggle('active');
+        })
+        
+        el.style.setProperty('--max-width-value', el.querySelector('span').offsetWidth + 'px');
+    })
+    
+    const explorerSearchOptionsListEl = document.querySelectorAll('.shortcut-explorer-wrapper > .explorer > .nav > .search-wrapper > .search > .options-wrapper > span');
+    explorerSearchOptionsListEl.forEach(el => {
+        el.addEventListener('click', (event) =>{
+            event.currentTarget.classList.toggle('active')
+        })
+    });
+    
+    // set default active search filter options
+    document.querySelector('.shortcut-explorer-wrapper > .explorer > .nav > .search-wrapper > .search > .options-wrapper > span#searchFilterIncludeDescription').classList.add('active');
+    
+    // Search Toggle
+    document.querySelector('.shortcut-explorer-wrapper > .explorer > .nav > .main-content > .quick-options > label#shortcutQuickOptionToggleSearch').addEventListener('click', (event) =>{
+        const eventElement = event.currentTarget;
+        document.querySelector('.shortcut-explorer-wrapper > .explorer > .nav > .search-wrapper').classList.toggle('active');
+        eventElement.style.pointerEvents = 'none'
+        
+        setTimeout(() => {
+            const inputEl = document.querySelector('.shortcut-explorer-wrapper > .explorer > .nav > .search-wrapper input');
+            inputEl.value = "";
+            if (eventElement.classList.contains('active')) inputEl.focus();
+            eventElement.style.pointerEvents = 'auto'
+        }, 200);
     })
 
-    // el.dataset.maxWidth = ;
-    el.style.setProperty('--max-width-value', el.querySelector('span').offsetWidth + 'px');
-})
 })
 
 
@@ -202,12 +226,12 @@ const sortActiveShortcutSoftware = () => {
             const localAbortController = new AbortController();
 
             const initOptionsActivation = setTimeout(() => {
-                    e.target.classList.add('active')
-                    e.target.dataset.animating = true;
-                    setTimeout(() => {
-                        e.target.dataset.animating = false;
-                    }, 400);
-                }, 500);
+                e.target.classList.add('active')
+                e.target.dataset.animating = true;
+                setTimeout(() => {
+                    e.target.dataset.animating = false;
+                }, 400);
+            }, 500);
 
             e.target.addEventListener('mouseleave', (ev) => {
                 clearTimeout(initOptionsActivation)
