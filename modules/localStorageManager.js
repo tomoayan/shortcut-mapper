@@ -1,4 +1,4 @@
-import { shortcutList } from "./data.js"
+import { lastListModification, shortcutList, softwareList } from "./data.js"
 
 
 const isNonEmptyString = (data) => typeof data === "string" && data.trim().length > 0;
@@ -23,6 +23,14 @@ export const init = () => {
             if (localStorage.getItem("shortcuts")) {
                 const shortcutsData = JSON.parse(localStorage.getItem("shortcuts"))
                 shortcutList.set(shortcutsData)
+
+                let softwareListTMP = {}
+                for (const [softwareName, value] of Object.entries(shortcutsData.softwares)) {
+                    softwareListTMP[softwareName] = value.icon
+                }
+                softwareList.set(softwareListTMP)
+
+                lastListModification.set(shortcutsData.lastModification)
                 resolve()
             }
         } catch (err) {
@@ -145,7 +153,7 @@ export const removeSoftware = (softwareName) => {
     return new Promise((resolve, reject) => {
         try {
             const haveSoftwareName = isNonEmptyString(softwareName);
-            
+
 
             if (!haveSoftwareName) {
                 console.log('software name is missing')

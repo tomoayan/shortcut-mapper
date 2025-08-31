@@ -2,6 +2,7 @@ import { shortcutList, keyboardActiveKeys, keyboardIsPause, keyboardKeyDomListRa
 import * as localStorageData from "./modules/localStorageManager.js"
 import "./modules/sideBar/newSoftwareShortcut.js"
 // import * as gdrive from "./drive.js";
+// import './modules/shortcutExplorer/index.js'
 
 let isLogin = true
 
@@ -9,6 +10,7 @@ addEventListener('DOMContentLoaded', async () => {
 
     // Event: Keydown
     setTimeout(() => {
+        // debugger
         document.addEventListener('keydown', function (event) {
             if (keyboardIsPause.value) return
 
@@ -51,7 +53,7 @@ addEventListener('DOMContentLoaded', async () => {
 const shortcutDeleteController = new AbortController() // tmp way to remove unsed events
 
 const sortActiveShortcutSoftware = () => {
-    console.warn('activeKeyboardKeys started')
+    // console.warn('activeKeyboardKeys started')
     const sortStartTime = performance.now();
 
     shortcutDeleteController.abort() // remove previous events
@@ -79,8 +81,8 @@ const sortActiveShortcutSoftware = () => {
 
 
 
-    let softwareList = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.software-list > li');
-    for (let index = 2; index < softwareList.length; index++) softwareList[index].remove(); // remove exsiting
+    let softwareList = document.querySelector('.content-wrapper > .shortcut-explorer-wrapper > .side-panel > ul.software-list');
+    softwareList.innerHTML = ""
     for (const [key, val] of Object.entries(shortcutList.value.softwares)) {
         const softwareElHtmlString = `<li data-software="${key}">
                                         <span>
@@ -88,6 +90,12 @@ const sortActiveShortcutSoftware = () => {
                                             ${key}
                                         </span>
                                         <div class="option-wrapper">
+                                            <span class="" data-software-name="${key}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-ellipsis-icon lucide-circle-ellipsis"><circle cx="12" cy="12" r="10"/><path d="M17 12h.01"/><path d="M12 12h.01"/><path d="M7 12h.01"/></svg>
+                                            </span>
+                                            <span class="" data-software-name="${key}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-plus-icon lucide-folder-plus"><path d="M12 10v6"/><path d="M9 13h6"/><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+                                            </span>
                                             <span class="remove-icon" title="tmp remove shortcut icon" data-software-name="${key}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                             </span>
@@ -95,9 +103,9 @@ const sortActiveShortcutSoftware = () => {
                                         </div>
                                     </li>`
         let li = parser.parseFromString(softwareElHtmlString, 'text/html')
-        softwareList[1].after(li.body.firstChild)
+        softwareList.append(li.body.firstChild)
     }
-    document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.software-list > li .remove-icon').forEach((el) => {
+    document.querySelectorAll('.content-wrapper > .shortcut-explorer-wrapper > .side-panel > ul.software-list > li .remove-icon').forEach((el) => {
         el.addEventListener('click', (e) => {
             const softwareName = e.currentTarget.dataset.softwareName;
             try {
@@ -137,34 +145,90 @@ const sortActiveShortcutSoftware = () => {
 
 
 
-    let shortcutListDOM = document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcut-list > li');
-    for (let index = 1; index < shortcutListDOM.length; index++) shortcutListDOM[index].remove(); // remove existing
+    let shortcutListDOM = document.querySelector('.content-wrapper > .shortcut-explorer-wrapper > .explorer > ul.shortcut-list');
+    shortcutListDOM.innerHTML = "" // remove existing
 
 
     for (const sCut of activeShortcutList) {
-        const softwareCountEl = document.querySelector(`.content-wrapper > .shortcut-wrapper > ul.software-list > li[data-software="${sCut.software}"] span.total`);
-        console.log(softwareCountEl)
+        const softwareCountEl = document.querySelector(`.content-wrapper > .shortcut-explorer-wrapper > .side-panel > ul.software-list > li[data-software="${sCut.software}"] span.total`);
         if (softwareCountEl) softwareCountEl.innerText = Number(softwareCountEl.innerText) + 1
-
 
         const shortcutElHtmlString = `<li>
                                 <div class="title-wrapper">
-                                    <img src="${sCut.icon}" alt="${sCut.software}" title="${sCut.software}">
-                                    <div class="title">
+                                <div class="title">
+                                        <img src="${sCut.icon}" alt="${sCut.software}" title="${sCut.software}">
                                         <strong>${sCut.usecase}</strong>
-                                        <span class="item-count">${sCut.shortcut.replaceAll('⌨', ' + ')}</span>
-                                        </div>
-                                        <span class="remove-icon" title="tmp remove shortcut icon" data-shortcut="${sCut.shortcut}" data-software-name="${sCut.software}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        <span class="active-keys"></span>
+                                    </div>
+                                    <div class="options-wrapper">
+                                        <span title="Pin" data-shortcut="${sCut.shortcut}" data-software-name="${sCut.software}">
+                                            <span>    
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pin-icon lucide-pin"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>
                                         </span>
+                                        <span title="Edit" data-shortcut="${sCut.shortcut}" data-software-name="${sCut.software}">
+                                            <span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                                        </span>
+                                        <span title="Move" data-shortcut="${sCut.shortcut}" data-software-name="${sCut.software}">
+                                            <span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-symlink-icon lucide-folder-symlink"><path d="M2 9.35V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h7"/><path d="m8 16 3-3-3-3"/></svg>
+                                        </span>
+                                        <span class="remove-icon" title="Delete" data-shortcut="${sCut.shortcut}" data-software-name="${sCut.software}">
+                                            <span>    
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        </span>
+                                    </div>
                                 </div>
-                                <p class="extra-info">${sCut.extrainfo}</p>
-                            </li>`
+                                ${sCut.extrainfo ? `<p class="extra-info">${sCut.extrainfo}</p>` : ""}
+                                </li>`
         let li = parser.parseFromString(shortcutElHtmlString, 'text/html')
-        shortcutListDOM[0].after(li.body.firstChild)
+
+        li.body.firstChild.addEventListener('mouseenter', (e) => {
+            const localAbortController = new AbortController();
+
+            const initOptionsActivation = setTimeout(() => {
+                    e.target.classList.add('active')
+                    e.target.dataset.animating = true;
+                    setTimeout(() => {
+                        e.target.dataset.animating = false;
+                    }, 400);
+                }, 500);
+
+            e.target.addEventListener('mouseleave', (ev) => {
+                clearTimeout(initOptionsActivation)
+                const intervalId = setInterval(() => {
+                    if (ev.target.dataset.animating === undefined) return clearInterval(intervalId);
+
+                    const animating = ev.target.dataset.animating === "true" ? true : false;
+                    if (!animating && !ev.target.querySelector('.options-wrapper').classList.contains('active')) {
+                        clearInterval(intervalId)
+                        ev.target.classList.remove('active');
+                        ev.target.removeAttribute('data-animating');
+                        localAbortController.abort()
+                    }
+                }, 100);
+            }, { signal: localAbortController.signal })
+        })
+
+        li.body.firstChild.querySelector(`.active-keys`).innerHTML = ''
+        sCut.shortcut.split('⌨').forEach((s) => {
+            const newEl = document.createElement('span');
+            newEl.innerText = s;
+            li.body.firstChild.querySelector(`.active-keys`).append(newEl);
+        })
+
+        li.body.querySelectorAll('.options-wrapper > span').forEach((el) => {
+            el.addEventListener('click', (e) => e.currentTarget.classList.toggle('active'))
+        })
+
+        shortcutListDOM.append(li.body.firstChild)
     }
 
-    document.querySelectorAll('.content-wrapper > .shortcut-wrapper > ul.shortcut-list > li .remove-icon').forEach((el) => {
+    document.querySelectorAll('.content-wrapper > .shortcut-explorer-wrapper > .explorer > ul.shortcut-list > li .remove-icon').forEach((el) => {
         el.addEventListener('click', async (e) => {
             const softwareName = e.currentTarget.dataset.softwareName;
             const shortcut = e.currentTarget.dataset.shortcut;
@@ -178,9 +242,9 @@ const sortActiveShortcutSoftware = () => {
     }, { signal: shortcutDeleteController.signal })
 
     const sortEndTime = performance.now();
-    document.querySelector('.shortcut-list .info-heading .results-timing').innerHTML = `Results in ${sortEndTime - sortStartTime}ms`
-    document.querySelector('.shortcut-list .info-heading .active-shortcut-list').innerHTML = `${keyboardActiveKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
-    console.warn('activeKeyboardKeys ended')
+    document.querySelector('.content-wrapper > .shortcut-explorer-wrapper > .explorer > .nav > .info-heading .results-timing').innerHTML = `Results in ${sortEndTime - sortStartTime}ms`
+    document.querySelector('.content-wrapper > .shortcut-explorer-wrapper > .explorer > .nav .active-shortcut-list').innerHTML = `${keyboardActiveKeys.value.map((e) => '<span>' + e + '</span>').join("")}`
+    // console.warn('activeKeyboardKeys ended')
 }
 
 

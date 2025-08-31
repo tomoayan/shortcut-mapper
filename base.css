@@ -24,6 +24,7 @@ body {
     /* Improve text rendering in safari */
     -webkit-font-smoothing: antialiased;
     font-family: "Poppins", sans-serif;
+      font-family: "DM Sans", sans-serif;
 }
 
 
