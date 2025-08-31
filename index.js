@@ -69,13 +69,11 @@ addEventListener('DOMContentLoaded', async () => {
     document.querySelector('.shortcut-explorer-wrapper > .explorer > .nav > .main-content > .quick-options > label#shortcutQuickOptionToggleSearch').addEventListener('click', (event) =>{
         const eventElement = event.currentTarget;
         document.querySelector('.shortcut-explorer-wrapper > .explorer > .nav > .search-wrapper').classList.toggle('active');
-        eventElement.style.pointerEvents = 'none'
         
         setTimeout(() => {
             const inputEl = document.querySelector('.shortcut-explorer-wrapper > .explorer > .nav > .search-wrapper input');
             inputEl.value = "";
             if (eventElement.classList.contains('active')) inputEl.focus();
-            eventElement.style.pointerEvents = 'auto'
         }, 200);
     })
 
