@@ -2,7 +2,7 @@ import { shortcutList, keyboardActiveKeys, keyboardIsPause, keyboardKeyDomListRa
 import * as localStorageData from "./modules/localStorageManager.js"
 import "./modules/sideBar/newSoftwareShortcut.js"
 // import * as gdrive from "./drive.js";
-// import './modules/shortcutExplorer/index.js'
+import './modules/shortcutExplorer/index.js'
 
 let isLogin = true
 
