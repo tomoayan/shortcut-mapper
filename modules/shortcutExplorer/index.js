@@ -1,4 +1,3 @@
-import Fuse from 'fuse.js';
 import { shortcutFilter } from './shortcutFilter.js'
 import { lastKeyPress, shortcutList, softwareList, keyboardActiveKeys, searchInputParams } from '../data.js'
 import { showShortcuts } from './ui-handler.js'

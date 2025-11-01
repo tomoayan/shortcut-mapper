@@ -1,4 +1,5 @@
-import Fuse from 'fuse.js'
+// import Fuse from 'fuse.js'
+import Fuse from '../../public/vendor/fuse.min.js'
 import { lastKeyPress, shortcutList, softwareList, keyboardActiveKeys } from '../data.js'
 
 let shortcutListLocal = [];
