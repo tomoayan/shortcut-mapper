@@ -1,4 +1,4 @@
-import { keyboardKeyDomListRaw, keyboardIsRawKeyInput, keyboardCurrVirtualName } from "../data.js"
+import { keyboardKeyDomListRaw, keyboardCurrVirtualName } from "../data.js"
 
 const keyboardSwitch = async (fileName) => {
 

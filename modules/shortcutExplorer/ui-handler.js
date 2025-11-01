@@ -1,7 +1,7 @@
 // const softwareListEl = document.querySelector('.shortcut-wrapper > #software-list')
 // const shortcutEl = document.querySelector('.shortcut-wrapper > #shortcut-list')
 
-import { shortcutList, keyboardActiveKeys, keyboardIsPause, searchInputParams } from "./../data.js"
+import { shortcutList, keyboardActiveKeys, keyboardIsRawKeyInput, keyboardIsPause, searchInputParams } from "./../data.js"
 
 
 
@@ -18,6 +18,27 @@ addEventListener('DOMContentLoaded', async () => {
         el.style.setProperty('--max-width-value', el.querySelector('span').offsetWidth + 'px');
     })
 
+    const explorerQuickOptionKeyboardDisableEl = document.querySelector('.shortcut-explorer-wrapper > .explorer > .nav > .main-content > .quick-options > label#quickOptionKeyboardDisabled')
+    explorerQuickOptionKeyboardDisableEl.addEventListener('click', (event) => {
+        const eventElement = event.currentTarget;
+        if (eventElement.classList.contains('active')) {
+            keyboardIsPause.set(true)
+        } else {
+            keyboardIsPause.set(false)
+        }
+    })
+
+    const explorerQuickOptionIsRawInputEl = document.querySelector('.shortcut-explorer-wrapper > .explorer > .nav > .main-content > .quick-options > label#isRawKeyboardInput');
+    explorerQuickOptionIsRawInputEl.addEventListener('click', (event) => {
+        const eventElement = event.currentTarget;
+        if (eventElement.classList.contains('active')) {
+            keyboardIsRawKeyInput.set(false)
+        } else {
+            keyboardIsRawKeyInput.set(true)
+        }
+    })
+
+
     const explorerSearchOptionsListEl = document.querySelectorAll('.shortcut-explorer-wrapper > .explorer > .nav > .search-wrapper > .search > .options-wrapper > span');
     explorerSearchOptionsListEl.forEach(el => {
         el.addEventListener('click', (event) => {
@@ -28,7 +49,7 @@ addEventListener('DOMContentLoaded', async () => {
     // set default active search filter options
     const searchFilterIncludeDescriptionEl = document.querySelector('.shortcut-explorer-wrapper > .explorer > .nav > .search-wrapper > .search > .options-wrapper > span#searchFilterIncludeDescription');
     searchFilterIncludeDescriptionEl.classList.add('active');
-    
+
     searchFilterIncludeDescriptionEl.addEventListener('click', (event) => {
         let localSearchInputParams = searchInputParams.value;
         if (event.currentTarget.classList.contains('active')) localSearchInputParams.searchFilterIncludeDescription = true;
