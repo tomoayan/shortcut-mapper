@@ -146,10 +146,10 @@ export const showShortcuts = (callback) => {
     }
     // Remove software btn
     document.querySelectorAll('.content-wrapper > .shortcut-explorer-wrapper > .side-panel > ul.software-list > li .remove-icon').forEach((el) => {
-        el.addEventListener('click', (e) => {
+        el.addEventListener('click', async (e) => {
             const softwareName = e.currentTarget.dataset.softwareName;
             try {
-                localStorageData.removeSoftware(softwareName)
+                await localStorageData.removeSoftware(softwareName)
             } catch (err) {
                 console.warn('unable to remove software')
                 console.error(err)
@@ -250,7 +250,7 @@ export const showShortcuts = (callback) => {
             const softwareName = e.currentTarget.dataset.softwareName;
             const shortcut = e.currentTarget.dataset.shortcut;
             try {
-                localStorageData.removeShortcut(softwareName, shortcut)
+                await localStorageData.removeShortcut(softwareName, shortcut)
             } catch (err) {
                 console.warn('unable to remove shortcut')
                 console.error(err)

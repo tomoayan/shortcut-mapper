@@ -8,6 +8,30 @@ let isLogin = true
 
 addEventListener('DOMContentLoaded', async () => {
 
+    // 1. Set the configuration (this part is synchronous and fine)
+localforage.config({
+    driver: localforage.INDEXEDDB, // Force only IndexedDB
+    name: 'shortcut-mapper',
+    storeName: 'data',
+});
+
+// 2. checkDatabaseSupport
+(async () => {
+    try {
+        // localforage.ready() will try to open the database.
+        // If it fails (because IndexedDB is not available),
+        // it will reject, and the 'catch' block will run.
+        await localforage.ready();
+        console.log('IndexedDB is available and ready.');
+    } catch (error) {
+        // This will now correctly catch the "No drivers available" error
+        console.error("IndexedDB is not available. localforage can't be initiated.", error);
+        alert("IndexedDB is not available in your browser. This app requires IndexedDB to function!");
+    }
+})();
+
+
+
     // Event: Keydown
     setTimeout(() => {
         // debugger
