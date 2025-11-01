@@ -100,6 +100,11 @@
                             height: 1rem;
                         }
                     }
+
+                    & span:not(.total):not(.remove-icon) {
+                        opacity: .5;
+                        pointer-events: none;
+                    }
                 }
 
                 & img,
@@ -428,6 +433,11 @@
                             }
                             &:nth-child(4) {
                                 translate: 0rem 0;
+                            }
+                            &:nth-child(1), &:nth-child(2), &:nth-child(3) {
+                            /* &:nth-child(n <= 3) { */
+                                pointer-events: none;
+                                opacity: .5;
                             }
                         }
                     }
