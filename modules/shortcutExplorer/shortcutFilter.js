@@ -1,44 +1,75 @@
+import Fuse from 'fuse.js'
 import { lastKeyPress, shortcutList, softwareList, keyboardActiveKeys } from '../data.js'
 
-export const shortcutFilter = (activeKeys) => {
-    activeKeys = Array.isArray(activeKeys) ? activeKeys : keyboardActiveKeys.value;
-    const shortcutListMap = new Map()
+let shortcutListLocal = [];
 
-    for (const [key, val] of Object.entries(shortcutList.value.softwares)) {
+shortcutList.subscribe((callback) => {
+    let shortcutListTemp = [];
+    for (const [key, val] of Object.entries(callback.softwares)) {
         for (const shortcut of val.shortcuts) {
-            const shortcutInfo = [{
-                usecase: shortcut.usecase,
-                extrainfo: shortcut.extrainfo,
-                software: key
-            }]
-
-            if (shortcutListMap.has(shortcut.shortcut)) {
-                shortcutListMap.set(shortcut.shortcut, [...(shortcutListMap.get(shortcut.shortcut)), ...shortcutInfo])
-                continue
-            }
-            shortcutListMap.set(shortcut.shortcut, shortcutInfo)
+            shortcutListTemp.push({
+                name: shortcut.usecase,
+                description: shortcut.extrainfo,
+                softwareName: key,
+                icon: val.icon,
+                shortcut: shortcut.shortcut
+            })
         }
     }
+    shortcutListLocal = shortcutListTemp;
+})
 
 
 
 
+export const shortcutFilter = (activeKeys, options) => {
+    activeKeys = Array.isArray(activeKeys) ? activeKeys : keyboardActiveKeys.value;
     const t1 = performance.now()
-    const shortcutKeyMap = [];
-    for (const [shortcutKey, value] of shortcutListMap) {
-        shortcutKeyMap.push([shortcutKey, value])
-    }
 
 
     // filter
-    const result = shortcutKeyMap.filter((shortcut) => {
-        const shortcutKeyArr = shortcut[0].split('⌨');
-        return activeKeys.every((val) => shortcutKeyArr.includes(val))
-    })
+    let result = null;
+    (() => {
+        if (activeKeys.length === 0) {
+            result = shortcutListLocal;
+            return;
+        }
+
+        let filteredShortcut = [];
+        for (const shortcut of shortcutListLocal) {
+            const isActiveShortcutFound = shortcut.shortcut.split('⌨').every((val) => activeKeys.includes(val));
+            if (isActiveShortcutFound) filteredShortcut.push(shortcut)
+        }
+        result = filteredShortcut;
+    })();
+
+    if (options?.searchInput) {
+        const fuseOptions = {
+            isCaseSensitive: false,
+            ignoreDiacritics: true,
+            findAllMatches: true,
+            threshold: .5,
+            keys: [
+                'name',
+            ]
+        };
+        if (options.searchFilterIncludeDescription) fuseOptions.keys.push('description');
+        if (options.searchFilterCaseSensitive) {
+            fuseOptions.isCaseSensitive = true;
+            fuseOptions.ignoreDiacritics = false;
+            fuseOptions.threshold = 0;
+        }
+
+
+        console.log(fuseOptions);
+        console.log(options.searchInput);
+
+        const fuse = new Fuse(result, fuseOptions);
+        result = fuse.search(options.searchInput).map(res => res.item);
+    }
+
 
     const t2 = performance.now()
     console.log(t2 - t1)
     return result
 }
-
-

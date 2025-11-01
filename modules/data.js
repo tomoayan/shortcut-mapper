@@ -10,6 +10,7 @@ export const lastListModification = new Reactor(null)
 
 // Keyboard Options
 export const keyboardActiveKeys = new Reactor([])
+export const searchInputParams = new Reactor({searchInput: undefined, searchFilterIncludeDescription: true, searchFilterCaseSensitive: false})
 export const keyboardIsPause = new Reactor(false)
 export const keyboardIsRawKeyInput = new Reactor("raw")
 export const keyboardKeyDomListRaw = {}

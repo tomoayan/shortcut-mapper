@@ -1,14 +1,22 @@
 import Fuse from 'fuse.js';
 import { shortcutFilter } from './shortcutFilter.js'
-import { lastKeyPress, shortcutList, softwareList, keyboardActiveKeys } from '../data.js'
+import { lastKeyPress, shortcutList, softwareList, keyboardActiveKeys, searchInputParams } from '../data.js'
+import { showShortcuts } from './ui-handler.js'
 
 
-
-const shortcutListSection = (callback) => {
-
-
-console.log(shortcutFilter(callback));
-
+const shortcutListSection = (callback, options) => {
+    showShortcuts(shortcutFilter(callback, options))
 }
 
-keyboardActiveKeys.subscribe(shortcutListSection)
+
+shortcutList.subscribe((callback) => {
+    shortcutListSection(keyboardActiveKeys.value);
+})
+
+keyboardActiveKeys.subscribe((callback) => {
+    shortcutListSection(callback, searchInputParams.value);
+})
+
+searchInputParams.subscribe((callback) => {
+    shortcutListSection(keyboardActiveKeys.value, callback);
+})

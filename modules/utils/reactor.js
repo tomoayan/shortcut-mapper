@@ -5,7 +5,7 @@ export class Reactor {
     }
 
     get value() {
-        console.log("getting value");
+        // console.log("getting value");
         if (typeof this._val === 'object' && this._val !== null) {
             return structuredClone(this._val);
         }
