@@ -1,6 +1,6 @@
 // const softwareListEl = document.querySelector('.shortcut-wrapper > #software-list')
 // const shortcutEl = document.querySelector('.shortcut-wrapper > #shortcut-list')
-
+import * as localStorageData from "./../localStorageManager.js"
 import { shortcutList, keyboardActiveKeys, keyboardIsRawKeyInput, keyboardIsPause, searchInputParams } from "./../data.js"
 
 
@@ -145,17 +145,17 @@ export const showShortcuts = (callback) => {
         softwareList.append(li.body.firstChild)
     }
     // Remove software btn
-    // document.querySelectorAll('.content-wrapper > .shortcut-explorer-wrapper > .side-panel > ul.software-list > li .remove-icon').forEach((el) => {
-    //     el.addEventListener('click', (e) => {
-    //         const softwareName = e.currentTarget.dataset.softwareName;
-    //         try {
-    //             localStorageData.removeSoftware(softwareName)
-    //         } catch (err) {
-    //             console.warn('unable to remove software')
-    //             console.error(err)
-    //         }
-    //     })
-    // })
+    document.querySelectorAll('.content-wrapper > .shortcut-explorer-wrapper > .side-panel > ul.software-list > li .remove-icon').forEach((el) => {
+        el.addEventListener('click', (e) => {
+            const softwareName = e.currentTarget.dataset.softwareName;
+            try {
+                localStorageData.removeSoftware(softwareName)
+            } catch (err) {
+                console.warn('unable to remove software')
+                console.error(err)
+            }
+        })
+    })
 
 
 

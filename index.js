@@ -1,5 +1,5 @@
 import { shortcutList, keyboardActiveKeys, keyboardIsPause, keyboardKeyDomListRaw, keyboardIsRawKeyInput } from "./modules/data.js"
-import * as localStorageData from "./modules/localStorageManager.js"
+import { init as localStorageDatainit } from "./modules/localStorageManager.js"
 import "./modules/sideBar/newSoftwareShortcut.js"
 // import * as gdrive from "./drive.js";
 import './modules/shortcutExplorer/index.js'
@@ -43,5 +43,5 @@ addEventListener('DOMContentLoaded', async () => {
         });
     }, 500);
 
-    await localStorageData.init();
+    await localStorageDatainit();
 })

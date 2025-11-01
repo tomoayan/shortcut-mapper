@@ -61,8 +61,8 @@ export const addSoftware = (data) => {
                 icon: data.icon,
                 shortcuts: []
             }
-            shortcutList.set(shortcutListTMP)
             updateLocalStorage(shortcutListTMP)
+            shortcutList.set(shortcutListTMP)
             resolve()
         } catch (err) {
             reject(err)
