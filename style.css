@@ -98,6 +98,7 @@ body > #loading-screen {
         overflow: hidden;
         border-radius: .5rem;
         display: flex;
+        justify-content: space-between;
         
         & .debug {
             display: flex;
