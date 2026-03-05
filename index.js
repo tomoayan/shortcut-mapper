@@ -1,3 +1,6 @@
+import './modules/components/loading.js'
+
+
 import { shortcutList, keyboardActiveKeys, keyboardIsPause, keyboardKeyDomListRaw, keyboardIsRawKeyInput } from "./modules/data.js"
 import { init as localStorageDatainit } from "./modules/localStorageManager.js"
 import "./modules/sideBar/newSoftwareShortcut.js"

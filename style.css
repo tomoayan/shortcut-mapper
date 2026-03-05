@@ -68,3 +68,47 @@ body {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+body > #loading-screen {
+    font-size: .9rem;
+    position: absolute;
+    inset: 0;
+    z-index: 999;
+    display: flex;
+    place-items: center;
+    place-content: center;
+    user-select: none;
+    background-color: hsla(0, 0%, 7%, .8);
+
+    & .loading-card {
+        background-color: hsla(0, 0%, 5%, 1);
+        min-width: 600px !important;
+        max-width: 800px;
+        width: 50%;
+        aspect-ratio: 16/9;
+        overflow: hidden;
+        border-radius: .5rem;
+        display: flex;
+        
+        & .debug {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem 1.5rem;
+            line-height: 1.3em;
+        }
+
+        & h2 {
+            font-size: 2em;
+        }
+    }
+}
