@@ -1,10 +1,9 @@
-import { keyboardKeyDomListRaw, keyboardIsRawKeyInput, keyboardCurrVirtualName } from "../data.js"
+import { keyboardKeyDomListRaw, keyboardIsRawKeyInput, keyboardCurrVirtualName } from "../../data.js"
 import { activeNavHelper } from './activeNavHelper.js'
-import { KeyboardHelper } from '../keyboard/keyboardHelper.js'
-import { inputHelper } from "./other/inputHelper.js";
+import { KeyboardHelper } from '../../keyboard/keyboardHelper.js'
 
 let primaryNavButtons = [];
-// const closeActiveNavOptions = document.querySelector("nav > .ul-wrapper > .secondary > ul > .nav")
+// const closeActiveNavOptions = document.querySelector("nav > .nav-header > .secondary > ul > .nav")
 
 const testfn = () => console.log('alert')
 
@@ -71,7 +70,7 @@ primaryNavButtons.push(() => {
                                     value: "none",
                                 },
                                 {
-                                    name: "Generic",
+                                    name: "Generic 100% Keyboard (US)",
                                     value: "generic",
                                 }
                             ],
@@ -89,27 +88,6 @@ primaryNavButtons.push(() => {
                         //     callback: testfn,
                         // },
                     ]
-                },
-                {
-                    subHeading: "Input Type",
-                    tooltip: "Gemini Write Something",
-                    items: [
-                        {
-                            type: 'select',
-                            options: [
-                                {
-                                    name: "Raw Input",
-                                    value: "raw",
-                                },
-                                {
-                                    name: "Processed Input",
-                                    value: "processed",
-                                }
-                            ],
-                            callback: inputHelper,
-                            currValueReactor: keyboardIsRawKeyInput
-                        }
-                    ]
                 }
             ]
         }, el.currentTarget)
@@ -124,14 +102,14 @@ primaryNavButtons.push(() => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const primaryList = document.querySelector("nav > .ul-wrapper > .nav-links > ul");
+    const primaryList = document.querySelector("nav .nav-header > .nav-menu > ul");
     primaryList.innerHTML = "";
     for (const el of primaryNavButtons) {
         primaryList.append(el());
     }
 
 setTimeout(() => {
-        document.querySelector("nav > .ul-wrapper > .nav-links > ul > li:not(.disabled)").click();
+        document.querySelector("nav .nav-header > .nav-menu > ul > li:not(.disabled)").click();
 }, 0);
     
 })

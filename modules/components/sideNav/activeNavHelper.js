@@ -2,18 +2,18 @@ import { radioBTN } from './buttons/radio.js'
 import { toggleBTN } from './buttons/toggle.js'
 import { sliderEl } from './buttons/slider.js';
 
-import { tmp } from '../data.js';
+import { tmp } from '../../data.js';
 
 
 export const activeNavHelper = (data, elCurrTarget) => {
 
     // move "active" class previous active to current element
-    document.querySelector(`nav > .ul-wrapper > .nav-links > ul > li.active`)?.classList.remove(['active'])
+    document.querySelector(`nav .nav-header > .nav-menu > ul > li.active`)?.classList.remove(['active'])
     elCurrTarget.classList.add(['active'])
 
 
     // Options Remove Animation
-    const secNavList = document.querySelector('nav > .ul-wrapper > .options-wrapper');
+    const secNavList = document.querySelector('nav .nav-header > .nav-body');
     secNavList.style.opacity = '0'
     secNavList.style.pointerEvents = 'none'
 
