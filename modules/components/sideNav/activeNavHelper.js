@@ -35,64 +35,64 @@ export const activeNavHelper = (data, elCurrTarget) => {
 
 
 
-    const compileNewOptions = () => {
-        return new Promise((resolve, reject) => {
-            try {
-                const template = document.createElement('template');
+//     const compileNewOptions = () => {
+//         return new Promise((resolve, reject) => {
+//             try {
+//                 const template = document.createElement('template');
 
-                // Heading Section
-                const headSection = document.createElement('section');
-                headSection.classList.add('nav-head');
-                headSection.innerHTML = `<p>${data.description}</p>`
-                template.append(headSection)
+//                 // Heading Section
+//                 const headSection = document.createElement('section');
+//                 headSection.classList.add('nav-head');
+//                 headSection.innerHTML = `<p>${data.description}</p>`
+//                 template.append(headSection)
 
 
-                // Add Other Section
-                for (const section of data.sections) {
-                    const newSectionEl = document.createElement('section');
-                    newSectionEl.innerHTML = `
-                        <h6 data-tooltip="${section.tooltip}">
-                            ${section.subHeading}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                class="lucide lucide-circle-question-mark-icon lucide-circle-question-mark">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                                <path d="M12 17h.01" />
-                            </svg>
-                        </h6>
-                        `
-                    // Items/Buttons Add
-                    for (const item of section.items) {
-                        const newListDiv = document.createElement('div')
+//                 // Add Other Section
+//                 for (const section of data.sections) {
+//                     const newSectionEl = document.createElement('section');
+//                     newSectionEl.innerHTML = `
+//                         <h6 data-tooltip="${section.tooltip}">
+//                             ${section.subHeading}
+//                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+//                                 stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+//                                 class="lucide lucide-circle-question-mark-icon lucide-circle-question-mark">
+//                                 <circle cx="12" cy="12" r="10" />
+//                                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+//                                 <path d="M12 17h.01" />
+//                             </svg>
+//                         </h6>
+//                         `
+//                     // Items/Buttons Add
+//                     for (const item of section.items) {
+//                         const newListDiv = document.createElement('div')
 
-                        if (item.type === 'select') {
-                            const radioDivWrapper = radioBTN(item.options, item.callback, controller.signal, item.currValueReactor)
-                            newListDiv.append(radioDivWrapper)
-                        }
+//                         if (item.type === 'select') {
+//                             const radioDivWrapper = radioBTN(item.options, item.callback, controller.signal, item.currValueReactor)
+//                             newListDiv.append(radioDivWrapper)
+//                         }
 
-                        if (item.type === 'toggle') {
-                            const newToggle = toggleBTN(item.name, item.callback, controller.signal)
-                            newListDiv.append(newToggle)
-                        }
+//                         if (item.type === 'toggle') {
+//                             const newToggle = toggleBTN(item.name, item.callback, controller.signal)
+//                             newListDiv.append(newToggle)
+//                         }
 
-                        if (item.type === 'slider') {
-                            const newSlider = sliderEl(item.name, item.callback, controller.signal)
-                            newListDiv.append(newSlider)
-                        }
+//                         if (item.type === 'slider') {
+//                             const newSlider = sliderEl(item.name, item.callback, controller.signal)
+//                             newListDiv.append(newSlider)
+//                         }
 
-                        newSectionEl.append(newListDiv)
-                    }
-                    template.append(newSectionEl)
-                }
+//                         newSectionEl.append(newListDiv)
+//                     }
+//                     template.append(newSectionEl)
+//                 }
 
-                resolve(template.children)
-            } catch (err) {
-                console.error(err)
-                reject()
-            }
-        })
-    }
+//                 resolve(template.children)
+//             } catch (err) {
+//                 console.error(err)
+//                 reject()
+//             }
+//         })
+//     }
 }
 
 
@@ -116,7 +116,6 @@ export const navOptions = (navOptionsData) => {
                 
                 document.querySelector('nav .nav-menu > p').textContent = data.desc;
                 // document.querySelector('nav .nav-body').innerHTML = data.body ? data.body : "";
-                console.log(data.bodyDOM)
                 document.querySelector('nav .nav-body').replaceChildren(data.bodyDOM);
             })
 
