@@ -10,9 +10,7 @@ export const sidebar = () => {
     return new Promise((resolve) => {
         globalLogger.push('nav initialization start', 'info');
         const parser = new DOMParser();
-        let sidebar = parser.parseFromString(sidebarHTML, 'text/html');
-        sidebar = document.body.appendChild(sidebar.body.firstChild);
-
+        let sidebar = parser.parseFromString(sidebarHTML, 'text/html').body.firstChild;
 
         navOptions([
             {
@@ -43,7 +41,9 @@ export const sidebar = () => {
                 desc: `Select your keyboard layout to improve visualization.`,
                 bodyDOM: optionItemKeyboardBody()
             },
-        ])
+        ], 'Keyboard', sidebar);
+
+        document.body.appendChild(sidebar);
 
         setTimeout(() => {
             sidebar.classList.remove('not-ready')

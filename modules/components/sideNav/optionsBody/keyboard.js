@@ -3,6 +3,7 @@
 
 import optionItemKeyboardBodyHTML from './keyboard.html?raw'
 import { keyboardKeyDomListRaw, keyboardCurrVirtualName } from "../../../data.js"
+import { globalLogger } from '../../../utils/logStore.js';
 
 const keyboardLayoutsHTMLRawList = import.meta.glob('../../keyboard/*.html', {
     query: '?raw',
@@ -19,10 +20,13 @@ export const optionItemKeyboardBody = () => {
     const radioGroupIdentifier = crypto.randomUUID();
 
 
+
+
+
     // Append available keyboard layouts
     for (const layoutFilePath of Object.keys(keyboardLayoutsHTMLRawList)) {
         const layoutName = layoutFilePath.match(/([^/]+)(?=\.[^/.]+$)/)[0]
-console.log(layoutName)
+
         const layoutRadioInput = document.createElement('input');
         layoutRadioInput.setAttribute("name", radioGroupIdentifier);
         layoutRadioInput.setAttribute("type", 'radio');
@@ -38,21 +42,18 @@ console.log(layoutName)
     }
 
 
+
+
+
     keyboardLayoutForm.addEventListener('change', async (event) => {
-        console.log("Selected theme:", event.target.value);
-
+                globalLogger.push(`Selected keyboard layout: ${event.target.value}`, 'info');
         const fileName = event.target.value;
-
-
         const keyboard_wrapper = document.getElementById('keyboard-wrapper')
-
 
         if (fileName === "none") {
             for (const key in keyboardKeyDomListRaw) delete keyboardKeyDomListRaw[key]; // Delete Previous Saved Keys from Memory
             return keyboard_wrapper.innerHTML = ''
         };
-
-
 
         for (const layoutFilePath of Object.keys(keyboardLayoutsHTMLRawList)) {
             const layoutName = layoutFilePath.match(/([^/]+)(?=\.[^/.]+$)/)[0]
@@ -62,7 +63,6 @@ console.log(layoutName)
                 keyboard_wrapper.innerHTML = extractedCode.groups.element + '<style>' + extractedCode.groups.style + '</style>';
             }
         }
-
 
         for (const key in keyboardKeyDomListRaw) delete keyboardKeyDomListRaw[key]; // Delete Previous Saved Keys from Memory
         const keyboardKeys = document.querySelectorAll('.keyboard button')
@@ -80,5 +80,9 @@ console.log(layoutName)
         }
     });
 
+
+    
+    // set preSelect layout "none"
+    keyboardLayoutForm.querySelector(`input[value='none']`).click();
     return optionItemKeyboardBody.body.firstChild
 }
