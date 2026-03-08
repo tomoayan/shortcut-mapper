@@ -72,6 +72,8 @@ nav {
         height: 100%;
         overflow: hidden;
         position: relative;
+        display: flex;
+        flex-direction: column;
 
         & .nav-menu {
             & ul {
@@ -107,12 +109,12 @@ nav {
             }
 
             & p {
+                display: block;
                 font-size: .7rem;
                 margin-top: .3rem;
-                padding: 0 1rem 1rem;
+                padding: 0 .9em .9em;
                 border-bottom: 2px solid var(--nav-border);
-                margin-bottom: -2rem;
-                display: block;
+                margin-bottom: 1.5em;
             }
         }
 
