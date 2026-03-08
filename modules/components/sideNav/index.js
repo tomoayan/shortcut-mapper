@@ -40,7 +40,7 @@ export const sidebar = () => {
                         <path d="M8 12h.01" />
                         <rect width="20" height="16" x="2" y="4" rx="2" />
                     </svg>`,
-                desc: `Select your keyboard layout to improve viulization`,
+                desc: `Select your keyboard layout to improve visualization.`,
                 bodyDOM: optionItemKeyboardBody()
             },
         ])
