@@ -1,4 +1,5 @@
 import { globalLogger } from '../utils/logStore.js';
+import { sidebar } from './sideNav/index.js'
 
 
 const loadingScreen = document.getElementById('loading-screen')
@@ -36,16 +37,27 @@ const unsubscribe = globalLogger.subscribe((event) => {
 
 function onDialogClose() {
     unsubscribe();
-    loadingScreenLogEl.innerHTML = ''; // Optional cleanup
 }
 
 
 globalLogger.push('logStore init successfully', 'info');
 
 
-if (loadingScreen) {
-    setTimeout(() => {
-        onDialogClose()
-        loadingScreen.remove()
-    }, 1000);
-}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    if (loadingScreen) {
+        Promise.all([sidebar()])
+            .then(([userResponse, postsResponse]) => {
+                // Both finished successfully
+            })
+            .catch(err => console.error(err));
+
+        setTimeout(() => {
+            onDialogClose()
+            loadingScreen.remove()
+        }, 1000);
+    }
+
+});
+
