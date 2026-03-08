@@ -1,5 +1,4 @@
 import './modules/components/loading.js'
-import './modules/components/sideNav/index.js'
 
 
 
