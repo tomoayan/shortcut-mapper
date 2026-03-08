@@ -13,8 +13,7 @@ export const navOptions = (navOptionsData, preOpen, sidebar) => {
                 navOption.classList.add(['active'])
                 
                 sidebar.querySelector('.nav-menu > p').textContent = data.desc;
-                // sidebar.querySelector('.nav-body').innerHTML = data.body ? data.body : "";
-                sidebar.querySelector('.nav-body').replaceChildren(data.bodyDOM);
+                sidebar.querySelector('.nav-body').replaceChildren(data.bodyDOM ? data.bodyDOM : "");
             })
 
             if (preOpen && preOpen === data.name) navOption.click();
