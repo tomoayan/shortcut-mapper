@@ -23,7 +23,7 @@ export const sidebar = () => {
                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>`,
-                desc: `test description 4 logim`
+                desc: `login to save your settings and data (software, shortcuts) to the cloud and access them across devices`,
             },
             {
                 name: 'Keyboard',
