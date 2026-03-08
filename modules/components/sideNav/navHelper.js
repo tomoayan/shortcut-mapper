@@ -1,115 +1,45 @@
-import { keyboardKeyDomListRaw, keyboardIsRawKeyInput, keyboardCurrVirtualName } from "../../data.js"
 import { activeNavHelper } from './activeNavHelper.js'
-import { KeyboardHelper } from '../../keyboard/keyboardHelper.js'
 
-let primaryNavButtons = [];
-// const closeActiveNavOptions = document.querySelector("nav > .nav-header > .secondary > ul > .nav")
+export const initNavButtons = (navCategories) => {
+    const generateNavButtons = () => {
+        return navCategories.map(category => {
+            const newListItem = document.createElement('li');
 
-const testfn = () => console.log('alert')
+            if (category.disabled) {
+                newListItem.setAttribute("class", "disabled");
+            }
 
+            if (category.tooltip) {
+                newListItem.setAttribute("title", category.tooltip);
+            }
 
+            newListItem.innerHTML = `${category.icon}
+    ${category.name}`;
 
+            if (!category.disabled && category.options) {
+                newListItem.addEventListener('click', (el) => {
+                    activeNavHelper(category.options, el.currentTarget);
+                });
+            }
 
-// Login
-primaryNavButtons.push(() => {
-    const newListItem = document.createElement('li');
-    newListItem.setAttribute("class", "disabled");
-    newListItem.setAttribute("title", "login coming soon");
-    newListItem.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-    class="lucide lucide-user-icon lucide-user">
-    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-    </svg>
-    Login
-    `
+            return newListItem;
+        });
+    };
 
-    return newListItem;
-})
-
-
-
-
-// Keyboard Layout Selector
-primaryNavButtons.push(() => {
-    const newListItem = document.createElement('li');
-    // newListItem.setAttribute("class", "active");
-    newListItem.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-    class="lucide lucide-keyboard-icon lucide-keyboard">
-    <path d="M10 8h.01" />
-    <path d="M12 12h.01" />
-    <path d="M14 8h.01" />
-    <path d="M16 12h.01" />
-    <path d="M18 8h.01" />
-    <path d="M6 8h.01" />
-    <path d="M7 16h10" />
-    <path d="M8 12h.01" />
-    <rect width="20" height="16" x="2" y="4" rx="2" />
-    </svg>
-    Keyboard
-    `
-
-    // Keyboard Options/Settings
-    newListItem.addEventListener('click', (el) => {
-        activeNavHelper({
-            heading: "Keyboard Layout",
-            description: "Select your keyboard layout to improve viulization",
-            sections: [
-                {
-                    subHeading: "Layout",
-                    tooltip: "Choose your keyboard layout. This is for visualization purposes and doesn't conflic with key input feature. if a key doesn't exist in the visulization keyboard, it will not cause an error on site functionality.",
-                    items: [
-                        {
-                            type: 'select',
-                            options: [
-                                {
-                                    name: "None",
-                                    value: "none",
-                                },
-                                {
-                                    name: "Generic 100% Keyboard (US)",
-                                    value: "generic",
-                                }
-                            ],
-                            callback: KeyboardHelper,
-                            currValueReactor: keyboardCurrVirtualName
-                        },
-                        // {
-                        //     type: 'toggle',
-                        //     name: "test",
-                        //     callback: testfn,
-                        // },
-                        // {
-                        //     type: 'slider',
-                        //     name: "Keyboard Width",
-                        //     callback: testfn,
-                        // },
-                    ]
-                }
-            ]
-        }, el.currentTarget)
-    })
-    return newListItem;
-})
-
-
-
-
-
-
-
-document.addEventListener('DOMContentLoaded', () => {
     const primaryList = document.querySelector("nav .nav-header > .nav-menu > ul");
+    if (!primaryList) return;
+
     primaryList.innerHTML = "";
-    for (const el of primaryNavButtons) {
-        primaryList.append(el());
+
+    const items = generateNavButtons();
+    for (const item of items) {
+        primaryList.append(item);
     }
 
-setTimeout(() => {
-        document.querySelector("nav .nav-header > .nav-menu > ul > li:not(.disabled)").click();
-}, 0);
-    
-})
+    setTimeout(() => {
+        const defaultActiveItem = document.querySelector("nav .nav-header > .nav-menu > ul > li:not(.disabled)");
+        if (defaultActiveItem) {
+            defaultActiveItem.click();
+        }
+    }, 0);
+};

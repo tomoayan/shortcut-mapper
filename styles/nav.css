@@ -105,6 +105,15 @@ nav {
                     }
                 }
             }
+
+            & p {
+                font-size: .7rem;
+                margin-top: .3rem;
+                padding: 0 1rem 1rem;
+                border-bottom: 2px solid var(--nav-border);
+                margin-bottom: -2rem;
+                display: block;
+            }
         }
 
 
@@ -114,17 +123,6 @@ nav {
             gap: 3rem;
             transition: opacity .2s cubic-bezier(0.55, 0, 1, 0.45);
             transition: opacity .2s ease-in-out;
-
-            & .nav-head {
-                padding: 0 1rem 1rem;
-                border-bottom: 2px solid var(--nav-border);
-                margin-bottom: -2rem;
-
-                & p {
-                    font-size: .7rem;
-                    margin-top: .3rem;
-                }
-            }
 
             & section:not(.nav-head) {
                 padding: 0 .5rem;
