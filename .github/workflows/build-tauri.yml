@@ -59,16 +59,29 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         run: |
           cd src-tauri/target/release/bundle/nsis/
-          ls -la
+          EXE_FILE=$(ls *.exe | head -n 1)
           
-          # Find the generated zip and sig
-          ZIP_FILE=$(ls *.zip | head -n 1)
-          SIG_FILE=$(ls *.sig | head -n 1)
+          if [ -z "$EXE_FILE" ]; then
+            echo "Error: Missing installer exe!"
+            exit 1
+          fi
           
-          if [ -z "$ZIP_FILE" ] || [ -z "$SIG_FILE" ]; then
-            echo "Error: Missing zip or sig file! Tauri did not generate the updater bundle."
+          echo "Zipping installer for updater..."
+          ZIP_FILE="${EXE_FILE}.zip"
+          zip $ZIP_FILE $EXE_FILE
+          
+          echo "Signing updater bundle..."
+          cd ../../../../../
+          pnpm tauri signer sign -f src-tauri/target/release/bundle/nsis/$ZIP_FILE
+          cd src-tauri/target/release/bundle/nsis/
+          
+          SIG_FILE="${ZIP_FILE}.sig"
+          if [ ! -f "$SIG_FILE" ]; then
+            echo "Error: Signature failed to generate! Check your Private Key and Password secrets."
             exit 1
           fi
           
@@ -91,5 +104,4 @@ jobs:
           }
           EOF
           
-          # Upload the assets to the release
           gh release upload dev-build $ZIP_FILE $SIG_FILE latest.json --clobber
