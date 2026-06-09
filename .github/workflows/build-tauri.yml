@@ -53,4 +53,43 @@ jobs:
           releaseBody: 'Automatically built from the latest commit on the svelte-rewrite branch.'
           releaseDraft: false
           prerelease: true
-          includeUpdaterJson: true
+          includeUpdaterJson: false
+
+      - name: Generate and Upload Updater JSON
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd src-tauri/target/release/bundle/nsis/
+          ls -la
+          
+          # Find the generated zip and sig
+          ZIP_FILE=$(ls *.zip | head -n 1)
+          SIG_FILE=$(ls *.sig | head -n 1)
+          
+          if [ -z "$ZIP_FILE" ] || [ -z "$SIG_FILE" ]; then
+            echo "Error: Missing zip or sig file! Tauri did not generate the updater bundle."
+            exit 1
+          fi
+          
+          SIG_CONTENT=$(cat $SIG_FILE)
+          VERSION=$(jq -r .version ../../../../../src-tauri/tauri.conf.json)
+          PUB_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          ZIP_URL="https://github.com/tomoayan/shortcut-mapper/releases/download/dev-build/$ZIP_FILE"
+          
+          cat <<EOF > latest.json
+          {
+            "version": "$VERSION",
+            "notes": "Automated dev build",
+            "pub_date": "$PUB_DATE",
+            "platforms": {
+              "windows-x86_64": {
+                "signature": "$SIG_CONTENT",
+                "url": "$ZIP_URL"
+              }
+            }
+          }
+          EOF
+          
+          # Upload the assets to the release
+          gh release upload dev-build $ZIP_FILE $SIG_FILE latest.json --clobber
