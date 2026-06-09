@@ -47,13 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-        with:
-          tagName: dev-build
-          releaseName: 'Latest Dev Build'
-          releaseBody: 'Automatically built from the latest commit on the svelte-rewrite branch.'
-          releaseDraft: false
-          prerelease: true
-          includeUpdaterJson: false
 
       - name: Generate and Upload Updater JSON
         shell: bash
@@ -105,4 +98,13 @@ jobs:
           }
           EOF
           
-          gh release upload dev-build $ZIP_FILE $SIG_FILE latest.json --clobber
+          echo "Replacing GitHub Release..."
+          # Delete the old release and its tag
+          gh release delete dev-build -y --cleanup-tag || true
+          
+          # Create fresh release with commit hash in title and upload everything
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          gh release create dev-build $EXE_FILE $ZIP_FILE $SIG_FILE latest.json \
+            --title "Latest Dev Build ($SHORT_SHA)" \
+            --notes "Automated dev build from commit $SHORT_SHA" \
+            --prerelease
