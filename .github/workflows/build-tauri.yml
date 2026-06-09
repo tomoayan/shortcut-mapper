@@ -72,7 +72,7 @@ jobs:
           
           echo "Zipping installer for updater..."
           ZIP_FILE="${EXE_FILE}.zip"
-          zip $ZIP_FILE $EXE_FILE
+          powershell -Command "Compress-Archive -Path '$EXE_FILE' -DestinationPath '$ZIP_FILE'"
           
           echo "Signing updater bundle..."
           cd ../../../../../
