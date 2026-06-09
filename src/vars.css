@@ -1,0 +1,31 @@
+/* Default Theme (Dark) */
+:root {
+    --root-font-color: hsl(0, 0%, 80%);
+    --root-highlight-color: hsl(0, 0%, 95%);
+
+    --logo-white: hsl(0, 0%, 90%);
+    --logo-yellow: hsl(47, 100%, 80%);
+    --logo-font-size: 1.4rem;
+
+    /* NAV */
+    --nav-background: hsl(0, 0%, 9%);
+    --nav-border: hsl(0, 0%, 14%);
+    --nav-item-text-color-hover: hsl(0, 0%, 100%);
+
+    /* Nav Width */
+    --nav-collapsed-width: 100px;
+    --nav-expanded-width: 250px;
+
+    --shortcut-nav-background: hsl(0, 0%, 7%);
+
+    --shortcut-list-bg: hsl(0, 0%, 9%);
+}
+
+/* Light Theme (Prepared for later) */
+[data-theme="light"] {
+    /* 
+    --root-font-color: hsl(0, 0%, 20%);
+    --nav-background: hsl(0, 0%, 100%);
+    ... add overrides here when ready
+    */
+}
