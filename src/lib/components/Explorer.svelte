@@ -1,5 +1,5 @@
 <script>
-    import { searchInput, keyboardIsRawKeyInput, searchResults, loadShortcuts, keyboardActiveKeys, searchQueryTime, searchIsCaseSensitive, searchIncludeDescription, isSearchVisible, keyboardIsPause } from '../store.js';
+    import { searchInput, keyboardIsRawKeyInput, searchResults, loadShortcuts, keyboardActiveKeys, searchQueryTime, searchIsCaseSensitive, searchIncludeDescription, isSearchVisible, keyboardIsPause, softwareList } from '../store.js';
     import { dbApi } from '../db.js';
 
     let timer;
@@ -75,9 +75,15 @@
     
     <ul class="shortcut-list">
         {#each $searchResults as shortcut (shortcut.id)}
+            {@const sw = $softwareList.find(s => s.id === shortcut.software_id)}
             <li>
                 <div class="title-wrapper">
                     <div class="title">
+                        {#if sw && sw.iconUrl}
+                            <img src={sw.iconUrl} alt={sw.name} title={sw.name} class="software-icon" />
+                        {:else if sw}
+                            <div class="software-icon placeholder" title={sw.name}>{sw.name.charAt(0).toUpperCase()}</div>
+                        {/if}
                         <strong>{shortcut.usecase}</strong>
                         <div class="active-keys">
                             <span>{shortcut.shortcut.split('⌨').join(' + ')}</span>
@@ -226,6 +232,20 @@ ul.shortcut-list li {
     display: flex;
     gap: .5rem;
     align-items: center;
+}
+.software-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 0.2rem;
+    object-fit: contain;
+}
+.software-icon.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: hsla(0, 0%, 100%, 0.1);
+    font-size: 0.7rem;
+    font-weight: bold;
 }
 .title strong {
     font-weight: 600;
