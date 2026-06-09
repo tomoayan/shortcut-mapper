@@ -85,6 +85,9 @@
                             <div class="software-icon placeholder" title={sw.name}>{sw.name.charAt(0).toUpperCase()}</div>
                         {/if}
                         <strong>{shortcut.usecase}</strong>
+                        {#if shortcut.page}
+                            <span class="page-chip">{shortcut.page}</span>
+                        {/if}
                         <div class="active-keys">
                             <span>{shortcut.shortcut.split('⌨').join(' + ')}</span>
                         </div>
@@ -246,6 +249,14 @@ ul.shortcut-list li {
     background-color: hsla(0, 0%, 100%, 0.1);
     font-size: 0.7rem;
     font-weight: bold;
+}
+.page-chip {
+    font-size: .65rem;
+    background-color: hsla(0, 0%, 100%, 0.1);
+    color: hsl(0, 0%, 70%);
+    padding: .1rem .4rem;
+    border-radius: .4rem;
+    font-weight: 500;
 }
 .title strong {
     font-weight: 600;

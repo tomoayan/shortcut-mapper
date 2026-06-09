@@ -92,10 +92,10 @@ async function getShortcuts(software_id, query, activeKeys, caseSensitive, inclu
   return data;
 }
 
-async function addShortcut(software_id, usecase, shortcut, extrainfo, path) {
+async function addShortcut(software_id, usecase, shortcut, extrainfo, page) {
   const data = await getAllShortcuts();
   const id = uuidv4();
-  data.push({ id, software_id, usecase, shortcut, extrainfo, path });
+  data.push({ id, software_id, usecase, shortcut, extrainfo, page });
   await localforage.setItem('shortcuts', data);
   return { success: true, id };
 }

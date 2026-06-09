@@ -1,6 +1,117 @@
 <script>
-    import { keyboardLayout, keyboardIsRawKeyInput } from '../store.js';
+    import { softwareList, activeSoftwareId, loadSoftware, loadShortcuts, softwareCounts } from '../store.js';
+    import { dbApi } from '../db.js';
+    import Modal from './Modal.svelte';
+    
+    let showSoftwareModal = false;
+    let newSoftwareName = '';
+    let newSoftwareIcon = null;
+    let newSoftwareIconUrl = '';
+    
+    function handleFileChange(e) {
+        const file = e.target.files[0];
+        if (file) {
+            newSoftwareIcon = file;
+            if (newSoftwareIconUrl) URL.revokeObjectURL(newSoftwareIconUrl);
+            newSoftwareIconUrl = URL.createObjectURL(file);
+        }
+    }
+    
+    async function createSoftware() {
+        if (!newSoftwareName.trim() || !newSoftwareIcon) return alert("Missing info");
+        await dbApi.addSoftware(newSoftwareName, newSoftwareIcon);
+        showSoftwareModal = false;
+        newSoftwareName = '';
+        newSoftwareIcon = null;
+        if (newSoftwareIconUrl) URL.revokeObjectURL(newSoftwareIconUrl);
+        newSoftwareIconUrl = '';
+        await loadSoftware();
+    }
+
+    async function deleteSoftware(e, id) {
+        e.stopPropagation();
+        if (confirm('Are you sure you want to delete this software and all its shortcuts?')) {
+            await dbApi.removeSoftware(id);
+            if ($activeSoftwareId === id) $activeSoftwareId = null;
+            await loadSoftware();
+            await loadShortcuts();
+        }
+    }
+
+    let showShortcutModal = false;
+    let newShortcutKeys = [];
+    let newShortcutName = '';
+    let newShortcutDetails = '';
+    let newShortcutPage = '';
+    let newShortcutSoftwareId = null;
+
+    function handleKeydown(e) {
+        e.preventDefault();
+        const key = e.key;
+        if (key === 'Escape') return; // let modal close
+        if (key === 'Backspace') {
+            newShortcutKeys = newShortcutKeys.slice(0, -1);
+            return;
+        }
+        if (!newShortcutKeys.includes(key)) {
+            newShortcutKeys = [...newShortcutKeys, key];
+        }
+    }
+
+    async function createShortcut() {
+        if (newShortcutKeys.length < 1) return alert('shortcut missing');
+        if (newShortcutName.trim().length < 1) return alert('shortcut name is missing');
+        if (!newShortcutSoftwareId) return alert('select a software');
+
+        await dbApi.addShortcut(
+            newShortcutSoftwareId, 
+            newShortcutName.trim(), 
+            newShortcutKeys.join('⌨'), 
+            newShortcutDetails.trim(),
+            newShortcutPage.trim()
+        );
+        showShortcutModal = false;
+        newShortcutKeys = [];
+        newShortcutName = '';
+        newShortcutDetails = '';
+        newShortcutPage = '';
+        newShortcutSoftwareId = null;
+        await loadSoftware(); // to refresh pages list
+        await loadShortcuts();
+    }
+    
+    function selectSoftware(id) {
+        $activeSoftwareId = id;
+    }
+
+    let expandedSoftware = {};
+    function toggleSoftware(e, id) {
+        if (e) e.stopPropagation();
+        expandedSoftware[id] = !expandedSoftware[id];
+    }
+
+    let activeContextMenu = null;
+    function openContextMenu(e, type, id, page = null) {
+        e.stopPropagation();
+        if (activeContextMenu && activeContextMenu.type === type && activeContextMenu.id === id && activeContextMenu.page === page) {
+            activeContextMenu = null;
+        } else {
+            activeContextMenu = { type, id, page };
+        }
+    }
+
+    function closeContextMenu() {
+        activeContextMenu = null;
+    }
+    
+    // Add New Modal selection
+    let showAddNewModal = false;
+    function openAddNew() {
+        showAddNewModal = true;
+    }
 </script>
+
+<svelte:window on:click={closeContextMenu} />
 
 <nav>
     <div class="branding">
@@ -11,82 +122,199 @@
             </p>
         </div>
     </div>
+    
     <div class="ul-wrapper">
-        <div class="nav-links">
-            <ul>
-                <li class="disabled" id="login">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-                    Login
-                </li>
-                <li id="keyboard" class="active">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-keyboard"><path d="M10 8h.01" /><path d="M12 12h.01" /><path d="M14 8h.01" /><path d="M16 12h.01" /><path d="M18 8h.01" /><path d="M6 8h.01" /><path d="M7 16h10" /><path d="M8 12h.01" /><rect width="20" height="16" x="2" y="4" rx="2" /></svg>
-                    Keyboard
-                </li>
+        <!-- Top Pages -->
+        <ul class="main-links">
+            <li class="disabled">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                Login
+            </li>
+            <li class="disabled">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                Settings
+            </li>
+            <li class="disabled">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-git-compare"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/></svg>
+                Comparison
+            </li>
+            <li class="active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                Search
+            </li>
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
+            <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+            <li class="active" on:click={openAddNew}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-square"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+                Add New
+            </li>
+            <li class="disabled">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart-2"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+                Graph
+            </li>
+        </ul>
+
+        <div class="category">
+            <h6 class="category-title">Softwares</h6>
+            <ul class="software-list">
+                {#each $softwareList as software}
+                    <li class="sw-item-container">
+                        <!-- svelte-ignore a11y_click_events_have_key_events -->
+                        <!-- svelte-ignore a11y_no_static_element_interactions -->
+                        <div class="sw-item" class:active={$activeSoftwareId === software.id} on:click={(e) => { selectSoftware(software.id); toggleSoftware(e, software.id); }}>
+                            <div class="sw-left">
+                                {#if software.iconUrl}
+                                    <img src={software.iconUrl} alt="logo">
+                                {:else}
+                                    <div class="sw-icon-placeholder">{software.name.charAt(0)}</div>
+                                {/if}
+                                <span class="sw-name">{software.name}</span>
+                                <!-- toggle sub-pages -->
+                                {#if software.pages && software.pages.length > 0}
+                                    <span class="dropdown-icon" style="transform: {expandedSoftware[software.id] ? 'rotate(90deg)' : 'rotate(0)'}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                    </span>
+                                {/if}
+                            </div>
+                            
+                            <div class="sw-right" style="position:relative;">
+                                <!-- total count, hidden on hover -->
+                                <span class="count">{$softwareCounts[software.id]?.total || 0}</span>
+                                
+                                <!-- hover actions -->
+                                <div class="hover-actions">
+                                    <span title="Options" on:click={(e) => openContextMenu(e, 'software', software.id)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                                    </span>
+                                </div>
+                                
+                                {#if activeContextMenu && activeContextMenu.type === 'software' && activeContextMenu.id === software.id}
+                                    <ul class="context-menu" on:click|stopPropagation>
+                                        <li on:click={(e) => { e.stopPropagation(); closeContextMenu(); }}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                                            Edit
+                                        </li>
+                                        <li on:click={(e) => { deleteSoftware(e, software.id); closeContextMenu(); }}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                            Delete
+                                        </li>
+                                    </ul>
+                                {/if}
+                            </div>
+                        </div>
+                        
+                        {#if expandedSoftware[software.id] && software.pages && software.pages.length > 0}
+                            <ul class="sw-pages">
+                                {#each software.pages as page}
+                                    <!-- svelte-ignore a11y_click_events_have_key_events -->
+                                    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+                                    <li class="page-item" on:click={() => {}}>
+                                        <div class="tree-line">├─</div>
+                                        <span class="page-name">{page}</span>
+                                        <div class="page-right" style="position:relative;">
+                                            <span class="count">{$softwareCounts[software.id]?.pages?.[page] || 0}</span>
+                                            <div class="hover-actions">
+                                                <span title="Options" on:click={(e) => openContextMenu(e, 'page', software.id, page)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                                                </span>
+                                            </div>
+                                            {#if activeContextMenu && activeContextMenu.type === 'page' && activeContextMenu.id === software.id && activeContextMenu.page === page}
+                                                <ul class="context-menu" on:click|stopPropagation>
+                                                    <li on:click={(e) => { e.stopPropagation(); closeContextMenu(); }}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                                                        Edit
+                                                    </li>
+                                                    <li on:click={(e) => { e.stopPropagation(); closeContextMenu(); }}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                                        Delete
+                                                    </li>
+                                                </ul>
+                                            {/if}
+                                        </div>
+                                    </li>
+                                {/each}
+                            </ul>
+                        {/if}
+                    </li>
+                {/each}
             </ul>
         </div>
-        <div class="options-wrapper">
-            <section class="nav-head">
-                <p>Select your keyboard layout to improve visualization</p>
-            </section>
-            
-            <section>
-                <h6>
-                    Layout
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-                </h6>
-                <div>
-                    <div class="navOption radio-container" style="--total-radio: 2;">
-                        <input type="radio" id="layout_none" value="none" bind:group={$keyboardLayout}>
-                        <label for="layout_none">None</label>
-                        <input type="radio" id="layout_generic" value="generic" bind:group={$keyboardLayout}>
-                        <label for="layout_generic">Generic</label>
-                        <div class="active-background"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <h6>
-                    Input Type
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-                </h6>
-                <div>
-                    <div class="navOption radio-container" style="--total-radio: 2;">
-                        <input type="radio" id="input_raw" value={true} bind:group={$keyboardIsRawKeyInput}>
-                        <label for="input_raw">Raw Input</label>
-                        <input type="radio" id="input_processed" value={false} bind:group={$keyboardIsRawKeyInput}>
-                        <label for="input_processed">Processed Input</label>
-                        <div class="active-background"></div>
-                    </div>
-                </div>
-            </section>
-        </div>
     </div>
-    <ul class="footer">
-        <li>
-            <a href="//github.com/tomoayan/shortcut-mapper" target="_blank">
-                <svg fill="currentColor" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <title>GitHub</title>
-                    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
-                </svg>
-                <p>shortcut-mapper</p>
-            </a>
-        </li>
-    </ul>
 </nav>
 
+<!-- Unified Add Modal -->
+<Modal bind:show={showAddNewModal} title="Add New">
+    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+        <button class="action-btn" style="margin:0" on:click={() => {showAddNewModal = false; showSoftwareModal = true;}}>Add Software</button>
+        <button class="action-btn" style="margin:0" on:click={() => {showAddNewModal = false; showShortcutModal = true;}}>Add Shortcut</button>
+    </div>
+</Modal>
+
+<Modal bind:show={showSoftwareModal} title="New Software">
+    <div class="basic-sw">
+        <div class="select-image">
+            <label for="select-file">Select<br>Image</label>
+            {#if newSoftwareIconUrl}
+                <img src={newSoftwareIconUrl} alt="Logo" />
+            {/if}
+            <input id="select-file" type="file" accept="image/*" on:change={handleFileChange}>
+        </div>
+        <input type="text" placeholder="Enter Software Name*" bind:value={newSoftwareName}>
+    </div>
+    <button class="action-btn" on:click={createSoftware}>Create</button>
+</Modal>
+
+<Modal bind:show={showShortcutModal} title="New Shortcut">
+    <div class="new-shortcut">
+        <div>
+            <label>Shortcut* (Press keys)</label>
+            <div class="shortcut-input-wrapper">
+                <input type="text" placeholder="Focus and press keys... (Backspace to undo)" on:keydown={handleKeydown} readonly value={newShortcutKeys.join(' ⌨ ')}>
+            </div>
+        </div>
+        <div>
+            <label>Name*</label>
+            <input type="text" placeholder="Shortcut Name" bind:value={newShortcutName}>
+        </div>
+        <div>
+            <label>Details</label>
+            <textarea placeholder="Shortcut details..." bind:value={newShortcutDetails}></textarea>
+        </div>
+        <div>
+            <label>Page (e.g. Edit Page)</label>
+            <input type="text" placeholder="e.g. Editing/Timeline" bind:value={newShortcutPage}>
+        </div>
+        <div>
+            <label>Software*</label>
+            <div class="sw-grid">
+                {#each $softwareList as sw}
+                    <div class="sw-option" class:selected={newShortcutSoftwareId === sw.id}>
+                        <input type="radio" id="nav-sw-{sw.id}" name="software" value={sw.id} bind:group={newShortcutSoftwareId}>
+                        <label for="nav-sw-{sw.id}">
+                            <img src={sw.iconUrl} alt={sw.name}>
+                            <span>{sw.name}</span>
+                        </label>
+                    </div>
+                {/each}
+            </div>
+        </div>
+        <button class="action-btn" on:click={createShortcut}>Create</button>
+    </div>
+</Modal>
+
 <style>
+/* Base Navigation styles */
 nav {
-    width: 20%;
+    width: 20rem;
     height: 100%;
-    min-width: 210px;
+    min-width: 250px;
     border-radius: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
     padding: 1.2rem;
     background-color: var(--nav-background);
-    border-left: 1px solid var(--nav-border);
+    border: 1px solid var(--nav-border);
     position: relative;
 }
 
@@ -95,6 +323,7 @@ div.branding {
     border-radius: .4rem;
     aspect-ratio: 5/2;
     position: relative;
+    flex-shrink: 0;
 }
 div.branding .branding-wrapper {
     position: absolute;
@@ -118,151 +347,348 @@ div.branding .branding-wrapper p span {
 }
 
 .ul-wrapper {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-}
-.nav-links ul {
-    display: flex;
-    gap: .5rem;
-}
-.nav-links ul li {
-    display: flex;
-    align-items: center;
-    gap: .3rem;
-    padding: .5rem .5rem;
-    border-radius: .4rem;
-    cursor: pointer;
-    user-select: none;
-    font-size: .7rem;
-    color: hsl(0, 0%, 40%);
-    transition: color .2s ease;
-}
-.nav-links ul li.disabled {
-    cursor: not-allowed;
-}
-.nav-links ul li.active {
-    color: var(--root-font-color);
-    pointer-events: none;
-}
-.nav-links ul li svg {
-    width: 1rem;
-    height: 1rem;
-}
-
-/* Options Wrapper */
-.options-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
-    margin-top: 2rem;
+    gap: 1.5rem;
+    overflow-y: auto;
+    flex-grow: 1;
 }
-.options-wrapper .nav-head {
-    padding: 0 1rem 1rem;
-    border-bottom: 2px solid var(--nav-border);
-    margin-bottom: -2rem;
+
+ul.main-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
 }
-.options-wrapper .nav-head p {
+
+ul.main-links li {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .5rem .8rem;
+    border-radius: .4rem;
+    cursor: pointer;
+    font-size: .85rem;
+    color: hsl(0, 0%, 70%);
+    transition: background-color .2s;
+}
+
+ul.main-links li:hover:not(.disabled) {
+    background-color: hsla(0, 0%, 100%, 0.05);
+}
+
+ul.main-links li.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+ul.main-links li.active {
+    color: hsl(0, 0%, 95%);
+}
+
+ul.main-links li svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.category {
+    display: flex;
+    flex-direction: column;
+}
+
+.category-title {
+    font-size: .75rem;
+    color: hsl(0, 0%, 50%);
+    padding: 0 .8rem;
+    margin-bottom: .5rem;
+    font-weight: 500;
+}
+
+ul.software-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.sw-item-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.sw-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem .8rem;
+    border-radius: .4rem;
+    cursor: pointer;
+    transition: background-color .2s;
+    min-height: 2.2rem;
+}
+
+.sw-item:hover {
+    background-color: hsla(0, 0%, 100%, 0.05);
+}
+.sw-item.active {
+    background-color: hsla(0, 0%, 100%, 0.1);
+}
+
+.sw-left {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    overflow: hidden;
+}
+
+.sw-left img, .sw-icon-placeholder {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: .2rem;
+    object-fit: contain;
+}
+
+.sw-icon-placeholder {
+    background-color: hsl(0, 0%, 25%);
+    display: grid;
+    place-content: center;
     font-size: .7rem;
-    margin-top: .3rem;
+    font-weight: 600;
 }
-.options-wrapper section:not(.nav-head) {
-    padding: 0 .5rem;
+
+.sw-name {
+    font-size: .85rem;
+    color: hsl(0, 0%, 85%);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sw-right {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    color: hsl(0, 0%, 50%);
+}
+
+.sw-right .count {
+    font-size: .7rem;
+    background-color: hsla(0, 0%, 100%, 0.05);
+    padding: .1rem .4rem;
+    border-radius: 1rem;
+}
+
+.hover-actions {
+    display: none;
+    align-items: center;
+    gap: .4rem;
+}
+
+.hover-actions span {
+    padding: .2rem;
+    border-radius: .2rem;
+    cursor: pointer;
+}
+
+.hover-actions span:hover {
+    background-color: hsla(0, 0%, 100%, 0.1);
+    color: hsl(0, 0%, 80%);
+}
+
+.sw-item:hover .count {
+    display: none;
+}
+
+.sw-item:hover .hover-actions {
+    display: flex;
+}
+
+.dropdown-icon {
+    display: grid;
+    place-content: center;
+    padding: .1rem;
+    border-radius: .2rem;
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+.dropdown-icon:hover {
+    background-color: hsla(0, 0%, 100%, 0.1);
+}
+
+/* Pages tree */
+ul.sw-pages {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    padding-left: 1.4rem;
+}
+
+.page-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .3rem .8rem .3rem 0;
+    cursor: pointer;
+    font-size: .8rem;
+    color: hsl(0, 0%, 70%);
+}
+
+.page-item:hover {
+    color: hsl(0, 0%, 95%);
+}
+
+.tree-line {
+    color: hsl(0, 0%, 30%);
+    margin-right: .5rem;
+    font-family: monospace;
+}
+
+.page-name {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.page-right {
+    display: flex;
+    align-items: center;
+}
+
+.page-right .count {
+    font-size: .7rem;
+    background-color: hsla(0, 0%, 100%, 0.05);
+    padding: .1rem .4rem;
+    border-radius: 1rem;
+}
+
+.page-item:hover .count {
+    display: none;
+}
+
+.page-item:hover .hover-actions {
+    display: flex;
+}
+
+/* Modal styles from Sidebar */
+.basic-sw {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.select-image {
+    width: 4rem;
+    height: 4rem;
+    position: relative;
+    border-radius: .3rem;
+    overflow: hidden;
+    background-color: hsl(0, 0%, 15%);
+}
+.select-image input {
+    display: none;
+}
+.select-image label {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    font-size: .7rem;
+    cursor: pointer;
+    z-index: 97;
+    background-color: hsla(0, 0%, 15%, 0.5);
+    user-select: none;
+    text-align: center;
+}
+.select-image img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 96;
+}
+.basic-sw > input {
+    flex-grow: 1;
+}
+
+.new-shortcut {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
-.options-wrapper section:not(.nav-head) h6 {
-    position: relative;
-    display: flex;
-    gap: .2rem;
-    font-size: .8rem;
-    font-weight: 500;
-    opacity: .9;
-    margin-bottom: -.2rem;
-}
-.options-wrapper section:not(.nav-head) h6 + div {
-    margin-top: -.3rem;
-}
-.options-wrapper section:not(.nav-head) h6 svg {
-    width: 1em;
-    height: 1em;
-    cursor: pointer;
-    opacity: .5;
-}
-
-/* Radio buttons */
-.navOption.radio-container {
-    --main-color: hsl(51, 89%, 71%);
-    --main-color-opacity: hsla(51, 89%, 71%, 0.1);
-    
+.new-shortcut div {
     display: flex;
     flex-direction: column;
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
+    gap: .3rem;
 }
-.navOption.radio-container input {
-    cursor: pointer;
-    appearance: none;
-    position: absolute;
-    opacity: 0;
+.new-shortcut label {
+    font-size: .8rem;
+    font-weight: 500;
 }
-.navOption.radio-container label {
-    cursor: pointer;
-    padding: .5rem;
-    position: relative;
-    color: grey;
-    transition: all 0.4s ease-out;
-    z-index: 2;
-    user-select: none;
-    font-size: .7rem;
-}
-.navOption.radio-container input:checked + label {
-    color: var(--main-color);
-    pointer-events: none;
-}
-.navOption.radio-container .active-background {
-    position: absolute;
-    inset: 0;
-    bottom: auto;
-    background-color: var(--main-color-opacity);
-    height: calc(100% / var(--total-radio));
-    border-radius: .5rem;
-    z-index: 1;
-    transition: transform .4s cubic-bezier(0.19, 1.0, 0.22, 1.0);
-    transform: translateY(-100%);
-}
-.navOption.radio-container:has(input:nth-of-type(1):checked) .active-background {
-    transform: translateY(0);
-}
-.navOption.radio-container:has(input:nth-of-type(2):checked) .active-background {
-    transform: translateY(100%);
+.new-shortcut input, .new-shortcut textarea {
+    width: 100%;
 }
 
-ul.footer {
+.sw-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    flex-direction: row !important;
+}
+.sw-option {
+    border-radius: .5rem;
+    background-color: hsl(0, 0%, 15%);
+    opacity: .5;
+    transition: opacity .2s;
+}
+.sw-option input {
+    display: none;
+}
+.sw-option label {
+    display: flex;
+    flex-direction: row !important;
+    gap: .5rem;
+    align-items: center;
+    padding: .4rem .8rem;
+    cursor: pointer;
+    font-size: .8rem;
+}
+.sw-option label img {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: .2rem;
+}
+.sw-option.selected {
+    opacity: 1;
+    background-color: hsl(0, 0%, 25%);
+}
+
+/* Context Menu */
+.context-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--nav-background);
+    border: 1px solid var(--nav-border);
+    border-radius: .4rem;
+    padding: .3rem;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    min-width: 8rem;
+    box-shadow: 0 .4rem 1rem hsla(0, 0%, 0%, 0.5);
     list-style: none;
 }
-ul.footer li a {
+.context-menu li {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 100%;
     gap: .5rem;
-    color: hsl(0, 0%, 80%);
-    user-select: none;
-}
-ul.footer li a p {
-    font-weight: 500;
+    padding: .4rem .6rem;
+    cursor: pointer;
     font-size: .8rem;
-    letter-spacing: .02cap;
+    border-radius: .2rem;
+    color: hsl(0, 0%, 80%);
 }
-ul.footer li a svg {
-    width: 1.4rem;
-    height: 1.4rem;
-}
-ul.footer li a:hover {
-    text-decoration: none;
+.context-menu li:hover {
+    background-color: hsla(0, 0%, 100%, 0.1);
 }
 </style>
