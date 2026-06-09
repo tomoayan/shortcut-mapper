@@ -76,7 +76,8 @@ jobs:
           
           echo "Signing updater bundle..."
           cd ../../../../../
-          pnpm tauri signer sign -f src-tauri/target/release/bundle/nsis/$ZIP_FILE
+          unset TAURI_SIGNING_PRIVATE_KEY_PATH
+          pnpm tauri signer sign -k "$TAURI_SIGNING_PRIVATE_KEY" -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" src-tauri/target/release/bundle/nsis/$ZIP_FILE
           cd src-tauri/target/release/bundle/nsis/
           
           SIG_FILE="${ZIP_FILE}.sig"
