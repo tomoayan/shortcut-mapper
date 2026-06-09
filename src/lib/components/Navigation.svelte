@@ -1,7 +1,9 @@
 <script>
-    import { softwareList, activeSoftwareId, loadSoftware, loadShortcuts, softwareCounts } from '../store.js';
+    import { softwareList, activeSoftwareId, loadSoftware, loadShortcuts, softwareCounts, editingSoftwareData, editingShortcutData } from '../store.js';
     import { dbApi } from '../db.js';
     import Modal from './Modal.svelte';
+    
+    import { onDestroy } from 'svelte';
     
     let showSoftwareModal = false;
     let newSoftwareName = '';
@@ -17,15 +19,34 @@
         }
     }
     
+    const unsubSoftware = editingSoftwareData.subscribe(data => {
+        if (data) {
+            newSoftwareName = data.name;
+            newSoftwareIconUrl = data.iconUrl || '';
+            newSoftwareIcon = null;
+            showSoftwareModal = true;
+        }
+    });
+    
+    $: if (!showSoftwareModal && $editingSoftwareData) {
+        $editingSoftwareData = null;
+    }
+
     async function createSoftware() {
-        if (!newSoftwareName.trim() || !newSoftwareIcon) return alert("Missing info");
-        await dbApi.addSoftware(newSoftwareName, newSoftwareIcon);
+        if (!newSoftwareName.trim()) return alert("Missing info");
+        if ($editingSoftwareData) {
+            await dbApi.updateSoftware($editingSoftwareData.id, newSoftwareName, newSoftwareIcon);
+        } else {
+            if (!newSoftwareIcon) return alert("Missing info");
+            await dbApi.addSoftware(newSoftwareName, newSoftwareIcon);
+        }
         showSoftwareModal = false;
         newSoftwareName = '';
         newSoftwareIcon = null;
         if (newSoftwareIconUrl) URL.revokeObjectURL(newSoftwareIconUrl);
         newSoftwareIconUrl = '';
         await loadSoftware();
+        await loadShortcuts();
     }
 
     async function deleteSoftware(e, id) {
@@ -45,6 +66,26 @@
     let newShortcutPage = '';
     let newShortcutSoftwareId = null;
 
+    const unsubShortcut = editingShortcutData.subscribe(data => {
+        if (data) {
+            newShortcutName = data.usecase;
+            newShortcutKeys = data.shortcut.split('⌨');
+            newShortcutDetails = data.extrainfo || '';
+            newShortcutPage = data.page || '';
+            newShortcutSoftwareId = data.software_id;
+            showShortcutModal = true;
+        }
+    });
+    
+    $: if (!showShortcutModal && $editingShortcutData) {
+        $editingShortcutData = null;
+    }
+    
+    onDestroy(() => {
+        unsubSoftware();
+        unsubShortcut();
+    });
+
     function handleKeydown(e) {
         e.preventDefault();
         const key = e.key;
@@ -63,13 +104,24 @@
         if (newShortcutName.trim().length < 1) return alert('shortcut name is missing');
         if (!newShortcutSoftwareId) return alert('select a software');
 
-        await dbApi.addShortcut(
-            newShortcutSoftwareId, 
-            newShortcutName.trim(), 
-            newShortcutKeys.join('⌨'), 
-            newShortcutDetails.trim(),
-            newShortcutPage.trim()
-        );
+        if ($editingShortcutData) {
+            await dbApi.updateShortcut(
+                $editingShortcutData.id,
+                newShortcutSoftwareId, 
+                newShortcutName.trim(), 
+                newShortcutKeys.join('⌨'), 
+                newShortcutDetails.trim(),
+                newShortcutPage.trim()
+            );
+        } else {
+            await dbApi.addShortcut(
+                newShortcutSoftwareId, 
+                newShortcutName.trim(), 
+                newShortcutKeys.join('⌨'), 
+                newShortcutDetails.trim(),
+                newShortcutPage.trim()
+            );
+        }
         showShortcutModal = false;
         newShortcutKeys = [];
         newShortcutName = '';
@@ -190,7 +242,7 @@
                                 
                                 {#if activeContextMenu && activeContextMenu.type === 'software' && activeContextMenu.id === software.id}
                                     <ul class="context-menu" on:click|stopPropagation>
-                                        <li on:click={(e) => { e.stopPropagation(); closeContextMenu(); }}>
+                                        <li on:click={(e) => { e.stopPropagation(); $editingSoftwareData = software; closeContextMenu(); }}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
                                             Edit
                                         </li>
@@ -250,7 +302,7 @@
     </div>
 </Modal>
 
-<Modal bind:show={showSoftwareModal} title="New Software">
+<Modal bind:show={showSoftwareModal} title={$editingSoftwareData ? "Edit Software" : "New Software"}>
     <div class="basic-sw">
         <div class="select-image">
             <label for="select-file">Select<br>Image</label>
@@ -261,10 +313,10 @@
         </div>
         <input type="text" placeholder="Enter Software Name*" bind:value={newSoftwareName}>
     </div>
-    <button class="action-btn" on:click={createSoftware}>Create</button>
+    <button class="action-btn" on:click={createSoftware}>{$editingSoftwareData ? "Save" : "Create"}</button>
 </Modal>
 
-<Modal bind:show={showShortcutModal} title="New Shortcut">
+<Modal bind:show={showShortcutModal} title={$editingShortcutData ? "Edit Shortcut" : "New Shortcut"}>
     <div class="new-shortcut">
         <div>
             <label>Shortcut* (Press keys)</label>
@@ -298,7 +350,7 @@
                 {/each}
             </div>
         </div>
-        <button class="action-btn" on:click={createShortcut}>Create</button>
+        <button class="action-btn" on:click={createShortcut}>{$editingShortcutData ? "Save" : "Create"}</button>
     </div>
 </Modal>
 

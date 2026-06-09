@@ -42,6 +42,21 @@ async function removeSoftware(id) {
   return { success: true };
 }
 
+async function updateSoftware(id, name, iconBlob) {
+  const data = await getSoftware();
+  const sw = data.find(s => s.id === id);
+  if (sw) {
+      sw.name = name;
+      if (iconBlob) {
+          if (sw.iconId) await localforage.removeItem(sw.iconId);
+          sw.iconId = `img-${uuidv4()}`;
+          await localforage.setItem(sw.iconId, iconBlob);
+      }
+      await localforage.setItem('software', data);
+      return { success: true };
+  }
+}
+
 async function getImage(iconId) {
   if (!iconId) return null;
   return await localforage.getItem(iconId);
@@ -106,6 +121,20 @@ async function removeShortcut(id) {
   return { success: true };
 }
 
+async function updateShortcut(id, software_id, usecase, shortcut, extrainfo, page) {
+  const data = await getAllShortcuts();
+  const sc = data.find(s => s.id === id);
+  if (sc) {
+      sc.software_id = software_id;
+      sc.usecase = usecase;
+      sc.shortcut = shortcut;
+      sc.extrainfo = extrainfo;
+      sc.page = page;
+      await localforage.setItem('shortcuts', data);
+      return { success: true };
+  }
+}
+
 export const dbApi = {
   getSoftware,
   getShortcuts,
@@ -113,5 +142,7 @@ export const dbApi = {
   addShortcut,
   removeSoftware,
   removeShortcut,
+  updateSoftware,
+  updateShortcut,
   getImage
 };

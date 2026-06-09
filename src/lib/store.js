@@ -11,6 +11,9 @@ export const searchIsCaseSensitive = writable(false);
 export const searchIncludeDescription = writable(true);
 export const isSearchVisible = writable(true);
 
+export const editingSoftwareData = writable(null);
+export const editingShortcutData = writable(null);
+
 // Keyboard stores
 export const keyboardActiveKeys = writable([]);
 export const keyboardIsPause = writable(false);
