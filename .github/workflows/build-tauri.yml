@@ -54,4 +54,3 @@ jobs:
           releaseDraft: false
           prerelease: true
           includeUpdaterJson: true
-          updaterJsonPreferNsis: true
