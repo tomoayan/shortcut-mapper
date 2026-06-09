@@ -16,8 +16,9 @@ pub fn run() {
       tauri::async_runtime::spawn(async move {
           use tauri_plugin_updater::UpdaterExt;
           if let Ok(Some(update)) = handle.updater().unwrap().check().await {
-              let _ = update.download_and_install(|_, _| {}, || {}).await;
-              handle.restart();
+              if let Ok(_) = update.download_and_install(|_, _| {}, || {}).await {
+                  handle.exit(0);
+              }
           }
       });
 
