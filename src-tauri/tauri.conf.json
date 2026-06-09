@@ -36,5 +36,13 @@
     "android": {
       "debugApplicationIdSuffix": ".debug"
     }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDg1MDU3NTVEQ0FFQ0UzMTMKUldRVDQrektYWFVGaGZTMncvN2NyUGRIcll2R25JVFdOTEROVzhjQVd5NXlabEpjQTNiRzRMSDUK",
+      "endpoints": [
+        "https://github.com/tomoayan/shortcut-mapper/releases/download/dev-build/latest.json"
+      ]
+    }
   }
 }

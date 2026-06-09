@@ -170,7 +170,7 @@
         <div class="branding-wrapper">
             <p>
                 Shortcut Mapper
-                <br><span>0.0.5 (Beta)</span>
+                <br><span>0.0.5-{__COMMIT_HASH__} (alpha)</span>
             </p>
         </div>
     </div>
