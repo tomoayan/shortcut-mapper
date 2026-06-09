@@ -107,4 +107,5 @@ jobs:
           gh release create dev-build $EXE_FILE $ZIP_FILE $SIG_FILE latest.json \
             --title "Latest Dev Build ($SHORT_SHA)" \
             --notes "Automated dev build from commit $SHORT_SHA" \
+            --target $GITHUB_SHA \
             --prerelease
