@@ -1,0 +1,137 @@
+/* color-scheme: auto convert html components to light or dark */
+html {
+    color-scheme: dark light;
+    -webkit-tap-highlight-color: transparent
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+}
+
+body {
+    /* Improve Accessibility */
+    line-height: 1.5;
+    /* Improve text rendering in safari */
+    -webkit-font-smoothing: antialiased;
+    font-family: "Poppins", sans-serif;
+    font-family: "DM Sans", sans-serif;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+iframe {
+    display: block;
+    border: none;
+    max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+    /* Removes auto zooming in safari */
+    font-size: inherit;
+}
+
+p {
+    /* "lang" html attribute recommended to use hyphens css property*/
+    hyphens: auto;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+    font-optical-sizing: auto;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+input,
+textarea,
+label {
+    display: block;
+}
+
+menu,
+ul,
+ol {
+    padding: 0;
+}
+
+:root {
+    --root-font-color: hsl(0, 0%, 80%);
+    --root-highlight-color: hsl(0, 0%, 95%);
+
+    --logo-white: hsl(0, 0%, 90%);
+    --logo-yellow: hsl(47, 100%, 80%);
+    --logo-font-size: 1.4rem;
+
+    /* NAV */
+    --nav-background: hsl(0, 0%, 9%);
+    --nav-border: hsl(0, 0%, 14%);
+    --nav-item-text-color-hover: hsl(0, 0%, 100%);
+
+    /* Nav Width */
+    --nav-collapsed-width: 100px;
+    --nav-expanded-width: 250px;
+
+    --shortcut-nav-background: hsl(0, 0%, 7%);
+
+    --shortcut-list-bg: hsl(0, 0%, 9%);
+}
+
+button,
+select {
+    color: var(--root-font-color);
+}
+
+body {
+    display: flex;
+    background-color: hsl(0, 0%, 5%);
+    flex: 1 0 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 1.5rem;
+    gap: 1.5rem;
+    color: var(--root-font-color);
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex: 1 1 0;
+
+    & > #keyboard-wrapper {
+        display: flex;
+        justify-content: center;
+
+        &:not(:has(> div)) {
+            display: none;
+        }
+    }
+}
